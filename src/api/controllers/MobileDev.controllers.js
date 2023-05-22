@@ -1,8 +1,9 @@
-const { MovieErrors } = require("../../helpers/jsonResponseMsgs");
+const { MobileDevErrors, MobileDevSuccess } = require("../../helpers/jsonResponseMsgs");
 const { MovieSuccess } = require("../../helpers/jsonResponseMsgs");
 const { CharacterErrors } = require("../../helpers/jsonResponseMsgs");
 const { CharacterSuccess } = require("../../helpers/jsonResponseMsgs");
 const Character = require("../models/Character.model");
+const MobileDev = require("../models/MobileDev.model");
 const Movie = require("../models/Movies.model");
 
 //! ---------------------------------------------------------------------
@@ -11,12 +12,12 @@ const Movie = require("../models/Movies.model");
 
 const create = async (req, res, next) => {
   try {
-    const newMovie = new Movie(req.body);
-    const saveMovie = await newMovie.save();
-    if (saveMovie) {
-      return res.status(200).json(saveMovie);
+    const newMobile = new MobileDev(req.body);
+    const saveMobile = await newMobile.save();
+    if (saveMobile) {
+      return res.status(200).json(saveMobile);
     } else {
-      return res.status(404).json(MovieErrors.FAIL_CREATING_MOVIE);
+      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
     }
   } catch (error) {
     return next(error);

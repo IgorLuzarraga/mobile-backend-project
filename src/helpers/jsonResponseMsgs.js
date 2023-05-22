@@ -11,6 +11,19 @@ const MovieSuccess = {
     SUCCESS_DELETING_MOVIE: "Success deleting movie"
 }
 
+const MobileDevErrors = {
+    FAIL_CREATING_MOBILEDEV: "Fail creating mobile dev",
+    FAIL_UPDATING_MOBILEDEV: "Fail updating mobile dev",
+    FAIL_SEARCHING_MOBILEDEV: "Fail searchinng mobile dev",
+    FAIL_SEARCHING_MOBILEDEV_BY_ID: "Fail searchinng mobile dev by Id",
+    FAIL_SEARCHING_MOBILEDEV_BY_NAME: "Fail searchinng mobile dev by Name",
+    FAIL_DELETING_MOBILEDEV: "Fail deleting mobile dev",
+}
+
+const MobileDevSuccess = {
+    SUCCESS_DELETING_MOBILEDEV: "Success deleting mobile dev"
+}
+
 const CharacterErrors = {
     FAIL_UPDATING_CHARACTERS: "Fail updating characters",
     FAIL_CREATING_CHARACTER: "Fail creating character",
@@ -26,5 +39,7 @@ const CharacterSuccess = {
 
 module.exports.MovieErrors = MovieErrors;
 module.exports.MovieSuccess = MovieSuccess
+module.exports.MobileDevErrors = MobileDevErrors;
+module.exports.MobileDevSuccess= MobileDevSuccess
 module.exports.CharacterErrors = CharacterErrors
 module.exports.CharacterSuccess = CharacterSuccess
