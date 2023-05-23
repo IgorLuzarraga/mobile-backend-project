@@ -24,7 +24,7 @@ app.use(
 
 //! limitaciones en la recepcion y envio de datos en 5mb
 app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ limit: '5mb', extended: true }));
+app.use(express.urlencoded({ limit: '5mb', extended: false }));
 
 //! -----ROUTES-----------
 const UserRoutes = require('./src/api/routes/user.routes');

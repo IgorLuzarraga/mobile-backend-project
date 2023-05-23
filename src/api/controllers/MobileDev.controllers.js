@@ -13,22 +13,86 @@ const Movie = require("../models/Movies.model");
 const App = require("../models/App.model");
 
 //! ---------------------------------------------------------------------
-//? -------------------------------POST ---------------------------------
+//? -------------------------------CREATE--------------------------------
 //! ---------------------------------------------------------------------
-
 const create = async (req, res, next) => {
+   
+
   try {
-    const newMobile = new MobileDev(req.body);
-    const saveMobile = await newMobile.save();
-    if (saveMobile) {
-      return res.status(200).json(saveMobile);
+    await MobileDev.syncIndexes();
+
+
+    const filterBody = {
+      brand: req.body.brand,
+      OS: req.body.OS,
+      versionOS: req.body.versionOS,
+      language: req.body.language,
+    };
+
+    const newMobileDev = new MobileDev(filterBody);
+ 
+    const { apps } = req.body;
+   
+    const arrayAppsIds = apps.split(',');
+    arrayAppsIds.forEach((item) => {
+      newMobileDev.apps.push(item);
+    });
+
+  
+    const saveApps = await newMobileDev.save();
+    
+    if (saveApps) {
+     
+      const arrayTest = [];
+
+      arrayAppsIds.forEach(async (itemID) => {
+        const appId = await App.findById(itemID);
+
+        await appId.updateOne({
+          $push: { apps: saveApps._id },
+        });
+
+        const testAppUpdate = await App.findById(itemID);
+
+        arrayTest.push({
+          idApp: itemID,
+          idMobile: newMobileDev._id,
+          testAppUpdate: testAppUpdate.mobileDevs.includes(
+            saveApps._id
+          )
+            ? true
+            : false,
+        });
+      });
+
+      return res.status(200).json({
+        newMobileDevs: saveApps,
+        testAppsUpdate: arrayTest,
+      });
     } else {
-      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
+      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV); 
     }
   } catch (error) {
     return next(error);
   }
 };
+
+//!OLD VERSION BELOW//
+// // const create = async (req, res, next) => {
+// //   try {
+// //     const newMobile = new MobileDev(req.body);
+// //     const saveMobile = await newMobile.save();
+// //     if (saveMobile) {
+// //       return res.status(200).json(saveMobile);
+// //     } else {
+// //       return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
+// //     }
+// //   } catch (error) {
+// //     return next(error);
+// //   }
+// // };
+//!OLD VERSION ABOVE//
+
 
 //! ---------------------------------------------------------------------
 //? ------------------------------GETALL --------------------------------
@@ -103,23 +167,41 @@ const getByBrand = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ----------------------------- UPDATE --------------------------------
 //! ---------------------------------------------------------------------
-
-const updateMovie = async (req, res, next) => {
+const updateMobileDev = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const oldNovie = await Movie.findByIdAndUpdate(id, req.body);
-    if (updateMovie) {
+    const oldMobileDev = await MobileDev.findByIdAndUpdate(id, req.body);
+    if (updateMobileDev) {
       return res.status(200).json({
-        oldMovie: oldNovie,
-        newMovie: await Movie.findById(id),
+        oldMobileDev: oldMobileDev,
+        newMobileDev: await MobileDev.findById(id),
+       'Status': MobileDevSuccess.SUCCESS_UPDATING_MOBILEDEV, //Añadido reciente.
       });
     } else {
-      return res.status(404).json(MovieErrors.FAIL_UPDATING_MOVIE);
+      return res.status(404).json(MobileDevErrors.FAIL_UPDATING_MOBILEDEV);
     }
   } catch (error) {
     return next(error);
   }
 };
+
+
+// const updateMovie = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const oldNovie = await Movie.findByIdAndUpdate(id, req.body);
+//     if (updateMovie) {
+//       return res.status(200).json({
+//         oldMovie: oldNovie,
+//         newMovie: await Movie.findById(id),
+//       });
+//     } else {
+//       return res.status(404).json(MovieErrors.FAIL_UPDATING_MOVIE);
+//     }
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
 
 //! ---------------------------------------------------------------------
 //? ----------------------------- DELETE --------------------------------
@@ -198,7 +280,7 @@ module.exports = {
   getAll,
   getById,
   getByBrand,
-  updateMovie,
+  updateMobileDev,
   //deleteMovie,
   deleteMobileDev
 };
