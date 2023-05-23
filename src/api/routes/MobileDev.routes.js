@@ -3,8 +3,8 @@ const {
   create,
   getAll,
   deleteMobileDev,
- getById,
-//   getByName,
+  getById,
+  getByBrand,
 //   updateMovie,
 //   deleteMovie,
 } = require("../controllers/MobileDev.controllers");
@@ -15,7 +15,7 @@ MobileRoutes.post("/", create)
 MobileRoutes.get("/", getAll)
 MobileRoutes.delete("/:id", deleteMobileDev)
 MobileRoutes.get("/:id", getById)
-// MobileRoutes.get("/name/:name", getByName)
+MobileRoutes.get("/brand/:brand", getByBrand)
 // MobileRoutes.patch("/:id", updateMovie)
 // MobileRoutes.delete("/:id", deleteMovie)
 

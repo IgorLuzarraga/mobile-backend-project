@@ -79,21 +79,21 @@ const getById = async (req, res, next) => {
 };
 
 //! ---------------------------------------------------------------------
-//? ----------------------------- GET BY NAME ---------------------------
+//? ----------------------------- GET BY Brand ---------------------------
 //! ---------------------------------------------------------------------
 
-const getByName = async (req, res, next) => {
+const getByBrand = async (req, res, next) => {
   try {
     
-    const { name } = req.params;
-    console.log("MOVIE NAME: ", name)
+    const { brand } = req.params;
+    
 
-    const movieByName = await Movie.find({ name }).populate('character')
+    const mobileDevByName = await MobileDev.find({ brand }).populate('apps')
 
-    if (movieByName) {
-      return res.status(200).json(movieByName);
+    if (mobileDevByName) {
+      return res.status(200).json(mobileDevByName);
     } else {
-      return res.status(404).json(MovieErrors.FAIL_SEARCHING_MOVIE_BY_NAME);
+      return res.status(404).json(MobileDevErrors.FAIL_SEARCHING_MOBILEDEV_BY_NAME);
     }
   } catch (error) {
     return next(error);
@@ -197,7 +197,7 @@ module.exports = {
   create,
   getAll,
   getById,
-  getByName,
+  getByBrand,
   updateMovie,
   //deleteMovie,
   deleteMobileDev
