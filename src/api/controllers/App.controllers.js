@@ -92,9 +92,12 @@ const create = async (req, res, next) => {
 };
 
 //! ---------------------------------------------------------------------
-//? ------------------------------GETALL --------------------------------
+//? ------------------------------GET ALL -------------------------------
 //! ---------------------------------------------------------------------
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 const getAll = async (req, res, next) => {
   try {
     // ES EL FIND DE LA QUERY DE MONGOOSE NOS TRAE TODOS LOS ELEMENTOS
@@ -178,6 +181,7 @@ const updateApp = async (req, res, next) => {
 //? ----------------------------- DELETE --------------------------------
 //! ---------------------------------------------------------------------
 
+<<<<<<< Updated upstream
 // const deleteCharacter = async (req, res, next) => {
 //   try {
 //     // We get the id from params
@@ -230,6 +234,8 @@ const updateApp = async (req, res, next) => {
 //   }
 // }
 
+=======
+>>>>>>> Stashed changes
 const deleteApp = async (req, res, next) => {
   try {
     // We get the id from params
