@@ -18,6 +18,7 @@ const {
 const express = require('express');
 const UserRoutes = express.Router();
 
+// HOLA prueba
 UserRoutes.get("/", getAll)
 UserRoutes.get("/:id", getById)
 UserRoutes.get('/register', upload.single('image'), registerWithRedirect);

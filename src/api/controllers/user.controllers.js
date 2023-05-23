@@ -514,7 +514,7 @@ const deleteUser = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 const getAll = async (req, res, next) => {
   try {
-    const allUsers = await User.find().populate("mobileDevs");
+    const allUsers = await User.find().populate("mobileDevs")
     if (allUsers) {
       return res.status(200).json(allUsers);
     } else {
