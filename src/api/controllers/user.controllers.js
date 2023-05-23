@@ -10,7 +10,7 @@ const { getTestEmailSend } = require('../../state/state.data');
 const nodemailer = require('nodemailer');
 const { generateToken } = require('../../utils/token');
 const randomPassword = require('../../utils/randomPassword');
-const { UserErrors, UserSuccess } = require('../../helpers/jsonResponseMsgs')
+const { UserErrors, UserSuccess } = require('../../helpers/jsonResponseMsgs');
 
 const PORT = process.env.PORT;
 const BASE_URL = process.env.BASE_URL;
@@ -26,10 +26,7 @@ const register = async (req, res, next) => {
     let confirmationCode = randomCode();
     const { email, name } = req.body;
 
-    const userExist = await User.findOne(
-      { email },
-      { name }
-    );
+    const userExist = await User.findOne({ email }, { name });
 
     if (!userExist) {
       const newUser = new User({ ...req.body, confirmationCode });
@@ -185,8 +182,8 @@ const registerWithRedirect = async (req, res, next) => {
 //? ------------------ CONTRALADORES QUE PUEDEN SER REDIRECT --------------------
 //! ----------------------------------------------------------------------------
 
-//!!! los controladores redirect son aquellos que son llamados por parte del 
-// cliente (los routers) o bien por otros controladores 
+//!!! los controladores redirect son aquellos que son llamados por parte del
+// cliente (los routers) o bien por otros controladores
 
 const sendCode = async (req, res, next) => {
   try {
@@ -239,14 +236,14 @@ const login = async (req, res, next) => {
   try {
     //const { email, password } = req.body;
 
-    const userEmail = req.body.email
-    const userPassword = req.body.password
+    const userEmail = req.body.email;
+    const userPassword = req.body.password;
 
     const userDB = await User.findOne({ email: userEmail });
 
-    console.log("User email: ", userEmail)
-    console.log("userDB: ", userDB)
-    console.log('User password: ', userPassword)
+    console.log('User email: ', userEmail);
+    console.log('userDB: ', userDB);
+    console.log('User password: ', userPassword);
 
     if (userDB) {
       if (bcrypt.compareSync(userPassword, userDB.password)) {
@@ -294,10 +291,8 @@ const login = async (req, res, next) => {
 const changeForgottenPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-
     const userDb = await User.findOne({ email });
     if (userDb) {
-
       return res.redirect(
         `${BASE_URL_COMPLETE}/api/v1/users/sendPasswordByEmail/${userDb._id}`
       );
@@ -325,7 +320,7 @@ const sendPasswordByEmail = async (req, res, next) => {
     });
 
     let randomPasswordSecure = randomPassword();
-    
+
     const mailOptions = {
       from: nodemailer_email,
       to: userDb.email,
@@ -365,7 +360,6 @@ const sendPasswordByEmail = async (req, res, next) => {
 //! ------------------CAMBIO DE CONTRASEÑA CUANDO YA SE ESTA LOGEADO---------------
 //? -----------------------------------------------------------------------------
 
-
 // const changePassword = async (req, res, next) => {
 //   try {
 //     const { password, newPassword } = req.body;
@@ -397,8 +391,6 @@ const sendPasswordByEmail = async (req, res, next) => {
 //   }
 // }
 
-
-
 const changePassword = async (req, res, next) => {
   try {
     const { password, newPassword } = req.body;
@@ -406,7 +398,6 @@ const changePassword = async (req, res, next) => {
     const { _id } = req.user;
 
     if (bcrypt.compareSync(password, req.user.password)) {
-
       const newPasswordHashed = bcrypt.hashSync(newPassword, 10);
 
       await User.findByIdAndUpdate(_id, { password: newPasswordHashed });
@@ -428,21 +419,19 @@ const changePassword = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
-}
-
+};
 
 //! -----------------------------------------------------------------------------
 //? ---------------------------------UPDATE--------------------------------------
 //! -----------------------------------------------------------------------------
 const update = async (req, res, next) => {
-
   let catchImg = req.file?.path;
 
   try {
-    console.log("req.body: ", req.body)
-    
+    console.log('req.body: ', req.body);
+
     const patchUser = new User(req.body);
-    
+
     if (req.file) {
       patchUser.image = req.file.path;
     }
@@ -482,7 +471,6 @@ const update = async (req, res, next) => {
     return res.status(200).json({
       testUpdate,
     });
-
   } catch (error) {
     deleteImgCloudinary(catchImg);
     return next(error);
@@ -498,7 +486,7 @@ const deleteUser = async (req, res, next) => {
 
     await User.findByIdAndDelete(_id);
     if (await User.findById(_id)) {
-      return res.status(404).json(UserErrors.FAIL_DELETING_USER); 
+      return res.status(404).json(UserErrors.FAIL_DELETING_USER);
     } else {
       deleteImgCloudinary(image);
       return res.status(200).json(UserSuccess.SUCCESS_DELETING_USER);
@@ -514,17 +502,16 @@ const deleteUser = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 const getAll = async (req, res, next) => {
   try {
-    const allUsers = await User.find().populate("mobileDevs")
+    const allUsers = await User.find().populate('mobileDevs');
     if (allUsers) {
       return res.status(200).json(allUsers);
     } else {
-      return res.status(404).json("No users found");
+      return res.status(404).json('No users found');
     }
   } catch (error) {
     return next(error);
   }
 };
-
 
 //! ---------------------------------------------------------------------
 //? ------------------------------GETBYID -------------------------------
@@ -532,11 +519,11 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userById = await User.findById(id).populate("mobileDevs");
+    const userById = await User.findById(id).populate('mobileDevs');
     if (userById) {
       return res.status(200).json(userById);
     } else {
-      return res.status(404).json("No user found");
+      return res.status(404).json('No user found');
     }
   } catch (error) {
     return next(error);
@@ -556,5 +543,5 @@ module.exports = {
   deleteUser,
   getAll,
   //getAllMobilesDev,
-  getById
+  getById,
 };

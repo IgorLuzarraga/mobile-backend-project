@@ -1,27 +1,23 @@
-const { 
-  MobileDevErrors, 
+const {
+  MobileDevErrors,
   MobileDevSuccess,
   AppErrors,
   AppSuccess,
- } = require("../../helpers/jsonResponseMsgs");
-const { MovieSuccess } = require("../../helpers/jsonResponseMsgs");
-const { CharacterErrors } = require("../../helpers/jsonResponseMsgs");
-const { CharacterSuccess } = require("../../helpers/jsonResponseMsgs");
-const Character = require("../models/Character.model");
-const MobileDev = require("../models/MobileDev.model");
-const Movie = require("../models/Movies.model");
-const App = require("../models/App.model");
+} = require('../../helpers/jsonResponseMsgs');
+const { MovieSuccess } = require('../../helpers/jsonResponseMsgs');
+const { CharacterErrors } = require('../../helpers/jsonResponseMsgs');
+const { CharacterSuccess } = require('../../helpers/jsonResponseMsgs');
+const Character = require('../models/Character.model');
+const MobileDev = require('../models/MobileDev.model');
+const Movie = require('../models/Movies.model');
+const App = require('../models/App.model');
 
 //! ---------------------------------------------------------------------
 //? -------------------------------CREATE--------------------------------
 //! ---------------------------------------------------------------------
 const create = async (req, res, next) => {
-   
-
   try {
     await MobileDev.syncIndexes();
-
-
     const filterBody = {
       brand: req.body.brand,
       OS: req.body.OS,
@@ -30,19 +26,17 @@ const create = async (req, res, next) => {
     };
 
     const newMobileDev = new MobileDev(filterBody);
- 
+
     const { apps } = req.body;
-   
+
     const arrayAppsIds = apps.split(',');
     arrayAppsIds.forEach((item) => {
       newMobileDev.apps.push(item);
     });
 
-  
     const saveApps = await newMobileDev.save();
-    
+
     if (saveApps) {
-     
       const arrayTest = [];
 
       arrayAppsIds.forEach(async (itemID) => {
@@ -57,9 +51,7 @@ const create = async (req, res, next) => {
         arrayTest.push({
           idApp: itemID,
           idMobile: newMobileDev._id,
-          testAppUpdate: testAppUpdate.mobileDevs.includes(
-            saveApps._id
-          )
+          testAppUpdate: testAppUpdate.mobileDevs.includes(saveApps._id)
             ? true
             : false,
         });
@@ -70,7 +62,7 @@ const create = async (req, res, next) => {
         testAppsUpdate: arrayTest,
       });
     } else {
-      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV); 
+      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
     }
   } catch (error) {
     return next(error);
@@ -93,7 +85,6 @@ const create = async (req, res, next) => {
 // // };
 //!OLD VERSION ABOVE//
 
-
 //! ---------------------------------------------------------------------
 //? ------------------------------GETALL --------------------------------
 //! ---------------------------------------------------------------------
@@ -113,7 +104,7 @@ const create = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const allMobileDevs = await MobileDev.find().populate("apps");
+    const allMobileDevs = await MobileDev.find().populate('apps');
     //console.log("getAll movies: ", allMobileDevs)
     if (allMobileDevs) {
       return res.status(200).json(allMobileDevs);
@@ -131,11 +122,13 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const mobileDevById = await MobileDev.findById(id).populate("apps");
+    const mobileDevById = await MobileDev.findById(id).populate('apps');
     if (mobileDevById) {
       return res.status(200).json(mobileDevById);
     } else {
-      return res.status(404).json(MobileDevErrors.FAIL_SEARCHING_MOBILEDEV_BY_ID);
+      return res
+        .status(404)
+        .json(MobileDevErrors.FAIL_SEARCHING_MOBILEDEV_BY_ID);
     }
   } catch (error) {
     return next(error);
@@ -148,16 +141,16 @@ const getById = async (req, res, next) => {
 
 const getByBrand = async (req, res, next) => {
   try {
-    
     const { brand } = req.params;
-    
 
-    const mobileDevByName = await MobileDev.find({ brand }).populate('apps')
+    const mobileDevByName = await MobileDev.find({ brand }).populate('apps');
 
     if (mobileDevByName) {
       return res.status(200).json(mobileDevByName);
     } else {
-      return res.status(404).json(MobileDevErrors.FAIL_SEARCHING_MOBILEDEV_BY_NAME);
+      return res
+        .status(404)
+        .json(MobileDevErrors.FAIL_SEARCHING_MOBILEDEV_BY_NAME);
     }
   } catch (error) {
     return next(error);
@@ -175,7 +168,7 @@ const updateMobileDev = async (req, res, next) => {
       return res.status(200).json({
         oldMobileDev: oldMobileDev,
         newMobileDev: await MobileDev.findById(id),
-       'Status': MobileDevSuccess.SUCCESS_UPDATING_MOBILEDEV, //Añadido reciente.
+        Status: MobileDevSuccess.SUCCESS_UPDATING_MOBILEDEV, //Añadido reciente.
       });
     } else {
       return res.status(404).json(MobileDevErrors.FAIL_UPDATING_MOBILEDEV);
@@ -184,7 +177,6 @@ const updateMobileDev = async (req, res, next) => {
     return next(error);
   }
 };
-
 
 // const updateMovie = async (req, res, next) => {
 //   try {
@@ -214,9 +206,9 @@ const updateMobileDev = async (req, res, next) => {
 
 //     const deleteMovie = await Movie.findByIdAndDelete(id);
 
-//     // esto anterior nos devuelve siempre el elemento buscado pero puede ser que 
+//     // esto anterior nos devuelve siempre el elemento buscado pero puede ser que
 //     //no haya borrado por eso cuidado
-    
+
 //     if (deleteMovie) {
 //       await Character.updateMany({ movies: id }, { $pull: { movies: id } });
 
@@ -224,9 +216,9 @@ const updateMobileDev = async (req, res, next) => {
 
 //       return res.status(200).json({
 //         deleteMovie: deleteMovie,
-//         test: 
-//           (await Movie.findById(id)) 
-//             ? MovieErrors.FAIL_DELETING_MOVIE 
+//         test:
+//           (await Movie.findById(id))
+//             ? MovieErrors.FAIL_DELETING_MOVIE
 //             : MovieSuccess.SUCCESS_DELETING_MOVIE,
 //         test:
 //           testCharacter.length > 0
@@ -248,9 +240,9 @@ const deleteMobileDev = async (req, res, next) => {
 
     const deleteMobileDev = await MobileDev.findByIdAndDelete(id);
 
-    // esto anterior nos devuelve siempre el elemento buscado pero puede ser que 
+    // esto anterior nos devuelve siempre el elemento buscado pero puede ser que
     //no haya borrado por eso cuidado
-    
+
     if (deleteMobileDev) {
       await App.updateMany({ mobileDevs: id }, { $pull: { mobileDevs: id } });
 
@@ -258,10 +250,9 @@ const deleteMobileDev = async (req, res, next) => {
 
       return res.status(200).json({
         deleteMobileDev: deleteMobileDev,
-        test: 
-          (await MobileDev.findById(id)) 
-            ? MobileDevErrors.FAIL_DELETING_MOBILEDEV 
-            : MobileDevSuccess.SUCCESS_DELETING_MOBILEDEV,
+        test: (await MobileDev.findById(id))
+          ? MobileDevErrors.FAIL_DELETING_MOBILEDEV
+          : MobileDevSuccess.SUCCESS_DELETING_MOBILEDEV,
         test:
           testApp.length > 0
             ? AppErrors.FAIL_UPDATING_APP
@@ -282,5 +273,5 @@ module.exports = {
   getByBrand,
   updateMobileDev,
   //deleteMovie,
-  deleteMobileDev
+  deleteMobileDev,
 };
