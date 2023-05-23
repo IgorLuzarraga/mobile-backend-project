@@ -78,7 +78,7 @@ const create = async (req, res, next) => {
 };
 
 //! ---------------------------------------------------------------------
-//? ------------------------------GETALL --------------------------------
+//? ------------------------------GET ALL -------------------------------
 //! ---------------------------------------------------------------------
 
 const getAll = async (req, res, next) => {
@@ -163,58 +163,6 @@ const updateApp = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ----------------------------- DELETE --------------------------------
 //! ---------------------------------------------------------------------
-
-// const deleteCharacter = async (req, res, next) => {
-//   try {
-//     // We get the id from params
-//     const { id } = req.params;
-
-//      // We find by Id and remove it
-//     const deleteCharacter = await Character.findByIdAndDelete(id);
-
-//     // deleteCountry contains the removed element,
-//     // but sometimes dosen't work, so watch out!
-//     if (deleteCharacter) {
-//       // We check if the deleted element is in the DB,
-//       // if don't, we remove the image from Cloudinary
-//       // if the element was not remove, we call next and finish the execution
-//       if (await Character.findById(id)) {
-//         // The character is still in the DB, so something went wrong
-//         // and we didn't delete it!
-//         // We can't do anything else, just report it!
-//         next(FAIL_DELETING_CHARACTER);
-//       } else {
-//         // The character was removed successfully!
-
-//         // delete image from cloudinary
-//         deleteImgCloudinary(deleteCharacter.image);
-
-//         // Update the Movie collection, but just the characters with the
-//         // Id id
-//         await Movie.updateMany(
-//           { characters: id }, // filter elements to update them
-//           {
-//             // pull removes the elements
-//             // that math the filter { characters: id },
-//             $pull: { characters: id },
-//           }
-//         )
-//       }
-
-//       // If everithhing went ok, we return a 200 Ok.
-//       // Just in case, we realize a test to check if the movie character
-//       // was removed correctly
-//       return res.status(200).json({
-//         deleteObject: deleteCharacter,
-//         test: (await Character.findById(id)) ? "Movie characer NOT deleted" : "movie character deleted",
-//       });
-//     } else {
-//       return res.status(404).json("Movie character not found! Delete error!");
-//     }
-//   } catch (error) {
-//     return next(error)
-//   }
-// }
 
 const deleteApp = async (req, res, next) => {
   try {

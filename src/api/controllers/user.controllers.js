@@ -10,6 +10,7 @@ const { getTestEmailSend } = require('../../state/state.data');
 const nodemailer = require('nodemailer');
 const { generateToken } = require('../../utils/token');
 const randomPassword = require('../../utils/randomPassword');
+const { UserErrors, UserSuccess } = require('../../helpers/jsonResponseMsgs')
 
 const PORT = process.env.PORT;
 const BASE_URL = process.env.BASE_URL;
@@ -276,16 +277,32 @@ const login = async (req, res, next) => {
 //! ------------------CAMBIO DE CONTRASEÑA CUANDO NO ESTAS LOGADO---------------
 //? -----------------------------------------------------------------------------
 
+// const changeForgottenPassword = async (req, res, next) => {
+//   try {
+//     const { email } = req.body;
+//     const userDb = await User.findOne({ email });
+//     if (userDb) {
+//       return res.redirect(
+//         `${BASE_URL_COMPLETE}/api/v1/users/sendPasswordByEmail/${userDb._id}`
+//       );
+//     } else {
+//       return res.status(404).json('User no register');
+//     }
+//   } catch (error) {}
+// };
+
 const changeForgottenPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+
     const userDb = await User.findOne({ email });
     if (userDb) {
+
       return res.redirect(
         `${BASE_URL_COMPLETE}/api/v1/users/sendPasswordByEmail/${userDb._id}`
       );
     } else {
-      return res.status(404).json('User no register');
+      return res.status(404).json(UserErrors.FAIL_REGISTRERING_USER);
     }
   } catch (error) {}
 };
@@ -313,14 +330,15 @@ const sendPasswordByEmail = async (req, res, next) => {
       from: nodemailer_email,
       to: userDb.email,
       subject: '-----',
-      text: `User: ${userDb.name}. Your new code login is ${randomPasswordSecure} Hemos enviado esto porque tenemos una solicitud de cambio de contraseña, si no has sido ponte en contacto con nosotros, gracias.`,
+      text: `User: ${userDb.name}. Your new code login is ${randomPasswordSecure} 
+      We sent you this msg because we recived a password change request,
+      if you didn't made it, please contact us!`,
     };
 
     transporter.sendMail(mailOptions, async function (error, info) {
       if (error) {
         return res.status(404).json('dont send email and dont update user');
       } else {
-        //console.log('Email sent: ' + info.response);
         const newPasswordBcrypt = bcrypt.hashSync(randomPasswordSecure, 10);
         await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
         const updatedUser = await User.findById(id);
@@ -348,6 +366,39 @@ const sendPasswordByEmail = async (req, res, next) => {
 //? -----------------------------------------------------------------------------
 
 
+// const changePassword = async (req, res, next) => {
+//   try {
+//     const { password, newPassword } = req.body;
+
+//     const { _id } = req.user;
+
+//     if (bcrypt.compareSync(password, req.user.password)) {
+
+//       const newPasswordHashed = bcrypt.hashSync(newPassword, 10);
+
+//       await User.findByIdAndUpdate(_id, { password: newPasswordHashed });
+
+//       const userUpdate = await User.findById(_id);
+
+//       if (bcrypt.compareSync(newPassword, userUpdate.password)) {
+//         return res.status(200).json({
+//           updateUser: true,
+//         });
+//       } else {
+//         return res.status(200).json({
+//           updateUser: false,
+//         });
+//       }
+//     } else {
+//       return res.status(404).json('passwords dont match');
+//     }
+//   } catch (error) {
+//     return next(error);
+//   }
+// }
+
+
+
 const changePassword = async (req, res, next) => {
   try {
     const { password, newPassword } = req.body;
@@ -372,12 +423,13 @@ const changePassword = async (req, res, next) => {
         });
       }
     } else {
-      return res.status(404).json('passwords dont match');
+      return res.status(404).json(UserErrors.FAIL_MATCHING_PASSWORDS);
     }
   } catch (error) {
     return next(error);
   }
-};
+}
+
 
 //! -----------------------------------------------------------------------------
 //? ---------------------------------UPDATE--------------------------------------
@@ -387,11 +439,9 @@ const update = async (req, res, next) => {
   let catchImg = req.file?.path;
 
   try {
-
     console.log("req.body: ", req.body)
+    
     const patchUser = new User(req.body);
-
-    console.log("patchUser: ", patchUser)
     
     if (req.file) {
       patchUser.image = req.file.path;
@@ -442,17 +492,16 @@ const update = async (req, res, next) => {
 //! -----------------------------------------------------------------------------
 //? ----------------------------- DELETE ----------------------------------------
 //! -----------------------------------------------------------------------------
-
 const deleteUser = async (req, res, next) => {
   try {
     const { _id, image } = req.user;
 
     await User.findByIdAndDelete(_id);
     if (await User.findById(_id)) {
-      return res.status(404).json('Dont delete');
+      return res.status(404).json(UserErrors.FAIL_DELETING_USER); 
     } else {
       deleteImgCloudinary(image);
-      return res.status(200).json('ok delete');
+      return res.status(200).json(UserSuccess.SUCCESS_DELETING_USER);
     }
   } catch (error) {
     deleteImgCloudinary(req.user.image);
@@ -460,13 +509,12 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-
 //! ---------------------------------------------------------------------
 //? ------------------------------GETALL --------------------------------
 //! ---------------------------------------------------------------------
 const getAll = async (req, res, next) => {
   try {
-    const allUsers = await User.find().populate("movies");
+    const allUsers = await User.find().populate("mobileDevs");
     if (allUsers) {
       return res.status(200).json(allUsers);
     } else {
@@ -477,13 +525,14 @@ const getAll = async (req, res, next) => {
   }
 };
 
+
 //! ---------------------------------------------------------------------
 //? ------------------------------GETBYID -------------------------------
 //! ---------------------------------------------------------------------
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const userById = await User.findById(id).populate("movies");
+    const userById = await User.findById(id).populate("mobileDevs");
     if (userById) {
       return res.status(200).json(userById);
     } else {
@@ -506,5 +555,6 @@ module.exports = {
   update,
   deleteUser,
   getAll,
+  //getAllMobilesDev,
   getById
 };

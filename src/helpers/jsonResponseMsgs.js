@@ -22,6 +22,7 @@ const MobileDevErrors = {
 
 const MobileDevSuccess = {
   SUCCESS_DELETING_MOBILEDEV: 'Success deleting mobile dev',
+  SUCCESS_UPDATING_MOBILEDEV: 'Success updating mobile dev',  //Añadida recientemente por J
 };
 
 const AppErrors = {

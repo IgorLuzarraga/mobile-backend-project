@@ -22,7 +22,7 @@ UserRoutes.get("/", getAll)
 UserRoutes.get("/:id", getById)
 UserRoutes.get('/register', upload.single('image'), registerWithRedirect);
 UserRoutes.post('/register', upload.single('image'), registerSlow);
-UserRoutes.get('/forgotpassword', changeForgottenPassword);
+UserRoutes.get('/forgotpassword/forgotpassword/', changeForgottenPassword);
 UserRoutes.post('/login', login);
 UserRoutes.patch('/changepassword', [isAuth], changePassword);
 UserRoutes.patch('/update/update', [isAuth], upload.single('image'), update);
