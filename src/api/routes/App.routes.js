@@ -4,7 +4,7 @@ const {
   getAll,
   getById,
   getByAppName,
-  //   updateCharacter,
+  updateApp,
   deleteApp,
 } = require('../controllers/App.controllers');
 
@@ -15,6 +15,7 @@ AppRoutes.delete('/:id', deleteApp);
 AppRoutes.get('/', getAll);
 AppRoutes.get('/:id', getById);
 AppRoutes.get('/appName/:appName', getByAppName);
+AppRoutes.patch('/:id', updateApp);
 
 //CharacterRoutes.post("/", upload.single("image"), create)
 //CharacterRoutes.post("/", create)

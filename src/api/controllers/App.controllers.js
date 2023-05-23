@@ -28,7 +28,7 @@ const create = async (req, res, next) => {
     const filterBody = {
       appName: req.body.appName,
       category: req.body.category,
-      languages: req.body.languages,
+      codeLanguages: req.body.codeLanguages,
       appSize: req.body.appSize,
     };
 
@@ -94,19 +94,6 @@ const create = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ------------------------------GETALL --------------------------------
 //! ---------------------------------------------------------------------
-// const getAll = async (req, res, next) => {
-//   try {
-//     // ES EL FIND DE LA QUERY DE MONGOOSE NOS TRAE TODOS LOS ELEMENTOS
-//     const allCharacter = await Character.find().populate("movies");
-//     if (allCharacter) {
-//       return res.status(200).json(allCharacter);
-//     } else {
-//       return res.status(404).json(FAIL_SEARCHING_CHARACTERS);
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
 
 const getAll = async (req, res, next) => {
   try {
@@ -162,158 +149,30 @@ const getByAppName = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ----------------------------- UPDATE --------------------------------
 //! ---------------------------------------------------------------------
-
-// We made a copy old the passed character
-const updateCharacterHelper = (oldCharacter, req) => {
-  const newCharater = new Character(oldCharacter);
-
-  const oldCharacterKeys = Object.keys(req.body);
-
-  oldCharacterKeys.forEach((key) => {
-    newCharater[key] = req.body[key];
+const updateAppHelper = (oldApp, req) => {
+  const newApp = new App(oldApp);
+  const oldAppKeys = Object.keys(req.body);
+  oldAppKeys.forEach((key) => {
+    newApp[key] = req.body[key];
   });
-
-  // si he recibido un archivo se lo meto en la clave image
-  if (req.file) {
-    newCharater.image = req.file.path;
-  }
-
-  return newCharater;
+  return newApp;
 };
-
-const updateCharacter = async (req, res, next) => {
-  //! capturo la url para si luego la tengo que borrar y le pongo el
-  // optional chaining (?) para que no me rompa en caso que no tenga
-  // la clave path
-  let catchImg = req.file?.path;
-
+const updateApp = async (req, res, next) => {
   try {
     const { id } = req.params;
-
-    /// vamos a buscar que exista este character en la base de datos
-    const characterById = await Character.findById(id);
-
-    /// guardamos la url de la imagen antigua
-    const oldImg = characterById.image;
-
-    //! SI EXISTE ESTE CHARACTER ENTONCES ME HACES LA LOGICA DEL UPDATE
-    if (characterById) {
-      // Me instancio un nuevo objeto del modelo Character
-      //const patchCharacter = new Character(req.body);
-      //const patchCharacter = copyCharacter(req.body)
-
-      const patchCharacter = updateCharacterHelper(characterById, req);
-
-      //! IMPORTANTE --> METER EL ID ANTIGUO PARA QUE NO CAMBIE
-      patchCharacter._id = id;
-
-      // // si he recibido un archivo se lo meto en la clave image
-      // if (req.file) {
-      //   patchCharacter.image = req.file.path;
-      // } else {
-      //   // si no lo recibo me quedo con el antiguo
-      //   patchCharacter.image = oldImg;
-      // }
-
-      // HACEMOS LA QUERY DE MONGOOSE DE ENCONTRAR POR ID Y ACTUALIZAR
-      const saveCharacter = await Character.findByIdAndUpdate(
-        id,
-        patchCharacter
-      );
-      // EVALUAMOS SI ESTA SE HA REALIZADO CORRECTAMENTE
-      if (saveCharacter) {
-        // si se ha actualizado ----> borro la foto antigua de cloudinary
-        // envio la respuesta con un 200
-        deleteImgCloudinary(oldImg);
-        return res.status(200).json(await Character.findById(id));
-      } else {
-        // si no se ha actualizado entonces mando una respuesta con un 404 diciendo que no se ha actualizado
-        return res.status(404).json('Dont save character');
-      }
-
-      //! SI NO EXISTE ME LANZAS UN ERROR AL USUARIO POR LA RESPUESTA
+    const appById = await App.findById(id);
+    if (appById) {
+      const patchApp = updateAppHelper(appById, req);
+      patchApp._id = id;
+      const saveApp = await App.findByIdAndUpdate(id, patchApp); // Guardar los cambios en la base de datos
+      return res.status(200).json(await App.findById(id)); // Responder con el objeto actualizado
     } else {
-      // si no he encontrado por id---> mando una respuesta 404 que no se ha encontrado
-      return res.status(404).json(FAIL_SEARCHING_CHARACTER_BY_ID);
+      return res.status(404).json(AppErrors.FAIL_UPDATING_APP); // Manejar el caso cuando no se encuentra la aplicación
     }
   } catch (error) {
-    //! IMPORTANTE--> si el character no se encontro o hay cualquier otro error capturado la foto se ha subido antes porque esta en el middleware
-    //! por lo cual hay borrarla para no tener basura dentro de nuestro cloudinary
-    if (req.file) {
-      //! le pasamos el req.file.path que incluye la url de cloudinary
-      deleteImgCloudinary(catchImg);
-    }
-
-    // por ultimo lanzamos el errror que se guardara en el log del backend
     return next(error);
   }
 };
-
-// const updateCharacter = async (req, res, next) => {
-//   //! capturo la url para si luego la tengo que borrar y le pongo el
-//   // optional chaining (?) para que no me rompa en caso que no tenga
-//   // la clave path
-//   let catchImg = req.file?.path
-
-//   try {
-//     const { id } = req.params
-
-//     /// vamos a buscar que exista este character en la base de datos
-//     const characterById = await Character.findById(id)
-
-//     /// guardamos la url de la imagen antigua
-//     const oldImg = characterById.image
-
-//     //! SI EXISTE ESTE CHARACTER ENTONCES ME HACES LA LOGICA DEL UPDATE
-//     if (characterById) {
-//       // Me instancio un nuevo objeto del modelo Character
-//       //const patchCharacter = new Character(req.body);
-//       const patchCharacter = copyCharacter(req.body)
-
-//       //! IMPORTANTE --> METER EL ID ANTIGUO PARA QUE NO CAMBIE
-//       patchCharacter._id = id;
-
-//       // si he recibido un archivo se lo meto en la clave image
-//       if (req.file) {
-//         patchCharacter.image = req.file.path;
-//       } else {
-//         // si no lo recibo me quedo con el antiguo
-//         patchCharacter.image = oldImg;
-//       }
-
-//       // HACEMOS LA QUERY DE MONGOOSE DE ENCONTRAR POR ID Y ACTUALIZAR
-//       const saveCharacter = await Character.findByIdAndUpdate(
-//         id,
-//         patchCharacter
-//       );
-//       // EVALUAMOS SI ESTA SE HA REALIZADO CORRECTAMENTE
-//       if (saveCharacter) {
-//         // si se ha actualizado ----> borro la foto antigua de cloudinary
-//         // envio la respuesta con un 200
-//         deleteImgCloudinary(oldImg);
-//         return res.status(200).json(await Character.findById(id));
-//       } else {
-//         // si no se ha actualizado entonces mando una respuesta con un 404 diciendo que no se ha actualizado
-//         return res.status(404).json("Dont save character");
-//       }
-
-//       //! SI NO EXISTE ME LANZAS UN ERROR AL USUARIO POR LA RESPUESTA
-//     } else {
-//       // si no he encontrado por id---> mando una respuesta 404 que no se ha encontrado
-//       return res.status(404).json(FAIL_SEARCHING_CHARACTER_BY_ID);
-//     }
-//   } catch (error) {
-//     //! IMPORTANTE--> si el character no se encontro o hay cualquier otro error capturado la foto se ha subido antes porque esta en el middleware
-//     //! por lo cual hay borrarla para no tener basura dentro de nuestro cloudinary
-//     if (req.file) {
-//       //! le pasamos el req.file.path que incluye la url de cloudinary
-//       deleteImgCloudinary(catchImg);
-//     }
-
-//     // por ultimo lanzamos el errror que se guardara en el log del backend
-//     return next(error);
-//   }
-// };
 
 //! ---------------------------------------------------------------------
 //? ----------------------------- DELETE --------------------------------
@@ -430,6 +289,6 @@ module.exports = {
   getAll,
   getById,
   getByAppName,
-  updateCharacter,
+  updateApp,
   deleteApp,
 };
