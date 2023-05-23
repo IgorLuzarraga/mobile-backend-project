@@ -2,17 +2,18 @@
 const {
   create,
   getAll,
-//   getById,
-//   getByName,
-//   updateCharacter,
-   deleteApp,
-} = require("../controllers/App.controllers");
+  //   getById,
+  getByAppName,
+  //   updateCharacter,
+  deleteApp,
+} = require('../controllers/App.controllers');
 
-const AppRoutes = require("express").Router();
+const AppRoutes = require('express').Router();
 
-AppRoutes.post("/", create)
-AppRoutes.delete("/:id", deleteApp)
-AppRoutes.get("/", getAll)
+AppRoutes.post('/', create);
+AppRoutes.delete('/:id', deleteApp);
+AppRoutes.get('/', getAll);
+AppRoutes.get('/appName/:appName', getByAppName);
 
 //CharacterRoutes.post("/", upload.single("image"), create)
 //CharacterRoutes.post("/", create)

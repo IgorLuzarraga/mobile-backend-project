@@ -1,9 +1,13 @@
-const { deleteImgCloudinary } = require("../../middleware/files.middleware");
-const Character = require("../models/Character.model");
-const Movie = require("../models/Movies.model");
-const App = require("../models/App.model");
-const MobileDev = require("../models/MobileDev.model");
-const { MobileDevErrors, AppErrors, AppSuccess } = require("../../helpers/jsonResponseMsgs")
+const { deleteImgCloudinary } = require('../../middleware/files.middleware');
+const Character = require('../models/Character.model');
+const Movie = require('../models/Movies.model');
+const App = require('../models/App.model');
+const MobileDev = require('../models/MobileDev.model');
+const {
+  MobileDevErrors,
+  AppErrors,
+  AppSuccess,
+} = require('../../helpers/jsonResponseMsgs');
 
 //! ---------------------------------------------------------------------
 //? -------------------------------POST ---------------------------------
@@ -14,7 +18,7 @@ const create = async (req, res, next) => {
   //let catchImg = req.file?.path;
 
   try {
-    await App.syncIndexes()
+    await App.syncIndexes();
 
     // const filterBody = {
     //   name: req.body.name,
@@ -22,11 +26,11 @@ const create = async (req, res, next) => {
     // }
 
     const filterBody = {
-        appName: req.body.appName,
-        category: req.body.category,
-        languages: req.body.languages,
-        appSize: req.body.appSize
-      }
+      appName: req.body.appName,
+      category: req.body.category,
+      languages: req.body.languages,
+      appSize: req.body.appSize,
+    };
 
     // cremos un nuevo modelo con los datos que nos trae la request body
     const newApp = new App(filterBody);
@@ -34,16 +38,16 @@ const create = async (req, res, next) => {
     //console.log("body: ", req.body)
 
     // cogemos las movies del req.body y las recorremos
-    const { mobileDevs } = req.body
-    
+    const { mobileDevs } = req.body;
+
     //console.log("mobileDevs: ", mobileDevs)
 
-    const arrayMobileDevsIds = mobileDevs.split(",");
+    const arrayMobileDevsIds = mobileDevs.split(',');
     arrayMobileDevsIds.forEach((item) => {
-        newApp.mobileDevs.push(item);
+      newApp.mobileDevs.push(item);
     });
 
-    console.log("newApp: ", newApp)
+    console.log('newApp: ', newApp);
 
     // lo guardamos en la db
     const saveMobileDevs = await newApp.save();
@@ -52,16 +56,16 @@ const create = async (req, res, next) => {
     if (saveMobileDevs) {
       // si es un si: envio un 200 y un json con el objeto postedo
 
-      const arrayTest = []
+      const arrayTest = [];
 
       arrayMobileDevsIds.forEach(async (itemID) => {
-        const mobileById = await MobileDev.findById(itemID)
-        
+        const mobileById = await MobileDev.findById(itemID);
+
         await mobileById.updateOne({
           $push: { apps: saveMobileDevs._id },
-        })
+        });
 
-        const testUpdateMobileDev = await MobileDev.findById(itemID)
+        const testUpdateMobileDev = await MobileDev.findById(itemID);
 
         arrayTest.push({
           idMobile: itemID,
@@ -87,8 +91,6 @@ const create = async (req, res, next) => {
   }
 };
 
-
-
 //! ---------------------------------------------------------------------
 //? ------------------------------GETALL --------------------------------
 //! ---------------------------------------------------------------------
@@ -107,18 +109,18 @@ const create = async (req, res, next) => {
 // };
 
 const getAll = async (req, res, next) => {
-    try {
-      // ES EL FIND DE LA QUERY DE MONGOOSE NOS TRAE TODOS LOS ELEMENTOS
-      const allApp = await App.find().populate("mobileDevs");
-      if (allApp) {
-        return res.status(200).json(allApp);
-      } else {
-        return res.status(404).json(AppErrors.FAIL_SEARCHING_APP);
-      }
-    } catch (error) {
-      return next(error);
+  try {
+    // ES EL FIND DE LA QUERY DE MONGOOSE NOS TRAE TODOS LOS ELEMENTOS
+    const allApp = await App.find().populate('mobileDevs');
+    if (allApp) {
+      return res.status(200).json(allApp);
+    } else {
+      return res.status(404).json(AppErrors.FAIL_SEARCHING_APP);
     }
+  } catch (error) {
+    return next(error);
   }
+};
 
 //! ---------------------------------------------------------------------
 //? ------------------------------GETBYID -------------------------------
@@ -126,7 +128,7 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const characterById = await Character.findById(id).populate("movies");
+    const characterById = await Character.findById(id).populate('movies');
     if (characterById) {
       return res.status(200).json(characterById);
     } else {
@@ -138,21 +140,20 @@ const getById = async (req, res, next) => {
 };
 
 //! ---------------------------------------------------------------------
-//? ----------------------------- GET BY NAME ---------------------------
+//? ----------------------------- GET BY APPNAME ---------------------------
 //! ---------------------------------------------------------------------
 
-const getByName = async (req, res, next) => {
+const getByAppName = async (req, res, next) => {
   try {
-    const { name } = req.params;
+    const { appName } = req.params;
 
-    const characterByName = await Character.find({ name });
+    const AppNameByName = await App.find({ appName });
 
-    if (characterByName) {
-      return res.status(200).json(characterByName);
+    if (AppNameByName) {
+      return res.status(200).json(AppNameByName);
     } else {
-      return res.status(404).json(FAIL_SEARCHING_CHARACTER_BY_NAME)
+      return res.status(404).json(FAIL_SEARCHING_APP_BY_NAME);
     }
-
   } catch (error) {
     return next(error);
   }
@@ -164,98 +165,95 @@ const getByName = async (req, res, next) => {
 
 // We made a copy old the passed character
 const updateCharacterHelper = (oldCharacter, req) => {
-  const newCharater = new Character(oldCharacter)
+  const newCharater = new Character(oldCharacter);
 
   const oldCharacterKeys = Object.keys(req.body);
 
   oldCharacterKeys.forEach((key) => {
-    newCharater[key] = req.body[key]
-  })
+    newCharater[key] = req.body[key];
+  });
 
-   // si he recibido un archivo se lo meto en la clave image
+  // si he recibido un archivo se lo meto en la clave image
   if (req.file) {
     newCharater.image = req.file.path;
-  } 
+  }
 
-  return newCharater
-}
+  return newCharater;
+};
 
-  const updateCharacter = async (req, res, next) => {
-    //! capturo la url para si luego la tengo que borrar y le pongo el 
-    // optional chaining (?) para que no me rompa en caso que no tenga 
-    // la clave path
-    let catchImg = req.file?.path 
-  
-    try {
-      const { id } = req.params
-  
-      /// vamos a buscar que exista este character en la base de datos
-      const characterById = await Character.findById(id)
-  
-      /// guardamos la url de la imagen antigua
-      const oldImg = characterById.image
-  
-      //! SI EXISTE ESTE CHARACTER ENTONCES ME HACES LA LOGICA DEL UPDATE
-      if (characterById) {
-        // Me instancio un nuevo objeto del modelo Character
-        //const patchCharacter = new Character(req.body);
-        //const patchCharacter = copyCharacter(req.body)
+const updateCharacter = async (req, res, next) => {
+  //! capturo la url para si luego la tengo que borrar y le pongo el
+  // optional chaining (?) para que no me rompa en caso que no tenga
+  // la clave path
+  let catchImg = req.file?.path;
 
-        const patchCharacter = updateCharacterHelper(
-            characterById, 
-            req
-          )
-  
-        //! IMPORTANTE --> METER EL ID ANTIGUO PARA QUE NO CAMBIE
-        patchCharacter._id = id;
-  
-        // // si he recibido un archivo se lo meto en la clave image
-        // if (req.file) {
-        //   patchCharacter.image = req.file.path;
-        // } else {
-        //   // si no lo recibo me quedo con el antiguo
-        //   patchCharacter.image = oldImg;
-        // }
-  
-        // HACEMOS LA QUERY DE MONGOOSE DE ENCONTRAR POR ID Y ACTUALIZAR
-        const saveCharacter = await Character.findByIdAndUpdate(
-          id,
-          patchCharacter
-        );
-        // EVALUAMOS SI ESTA SE HA REALIZADO CORRECTAMENTE
-        if (saveCharacter) {
-          // si se ha actualizado ----> borro la foto antigua de cloudinary
-          // envio la respuesta con un 200
-          deleteImgCloudinary(oldImg);
-          return res.status(200).json(await Character.findById(id));
-        } else {
-          // si no se ha actualizado entonces mando una respuesta con un 404 diciendo que no se ha actualizado
-          return res.status(404).json("Dont save character");
-        }
-  
-        //! SI NO EXISTE ME LANZAS UN ERROR AL USUARIO POR LA RESPUESTA
+  try {
+    const { id } = req.params;
+
+    /// vamos a buscar que exista este character en la base de datos
+    const characterById = await Character.findById(id);
+
+    /// guardamos la url de la imagen antigua
+    const oldImg = characterById.image;
+
+    //! SI EXISTE ESTE CHARACTER ENTONCES ME HACES LA LOGICA DEL UPDATE
+    if (characterById) {
+      // Me instancio un nuevo objeto del modelo Character
+      //const patchCharacter = new Character(req.body);
+      //const patchCharacter = copyCharacter(req.body)
+
+      const patchCharacter = updateCharacterHelper(characterById, req);
+
+      //! IMPORTANTE --> METER EL ID ANTIGUO PARA QUE NO CAMBIE
+      patchCharacter._id = id;
+
+      // // si he recibido un archivo se lo meto en la clave image
+      // if (req.file) {
+      //   patchCharacter.image = req.file.path;
+      // } else {
+      //   // si no lo recibo me quedo con el antiguo
+      //   patchCharacter.image = oldImg;
+      // }
+
+      // HACEMOS LA QUERY DE MONGOOSE DE ENCONTRAR POR ID Y ACTUALIZAR
+      const saveCharacter = await Character.findByIdAndUpdate(
+        id,
+        patchCharacter
+      );
+      // EVALUAMOS SI ESTA SE HA REALIZADO CORRECTAMENTE
+      if (saveCharacter) {
+        // si se ha actualizado ----> borro la foto antigua de cloudinary
+        // envio la respuesta con un 200
+        deleteImgCloudinary(oldImg);
+        return res.status(200).json(await Character.findById(id));
       } else {
-        // si no he encontrado por id---> mando una respuesta 404 que no se ha encontrado
-        return res.status(404).json(FAIL_SEARCHING_CHARACTER_BY_ID);
+        // si no se ha actualizado entonces mando una respuesta con un 404 diciendo que no se ha actualizado
+        return res.status(404).json('Dont save character');
       }
-    } catch (error) {
-      //! IMPORTANTE--> si el character no se encontro o hay cualquier otro error capturado la foto se ha subido antes porque esta en el middleware
-      //! por lo cual hay borrarla para no tener basura dentro de nuestro cloudinary
-      if (req.file) {
-        //! le pasamos el req.file.path que incluye la url de cloudinary
-        deleteImgCloudinary(catchImg);
-      }
-  
-      // por ultimo lanzamos el errror que se guardara en el log del backend
-      return next(error);
+
+      //! SI NO EXISTE ME LANZAS UN ERROR AL USUARIO POR LA RESPUESTA
+    } else {
+      // si no he encontrado por id---> mando una respuesta 404 que no se ha encontrado
+      return res.status(404).json(FAIL_SEARCHING_CHARACTER_BY_ID);
     }
+  } catch (error) {
+    //! IMPORTANTE--> si el character no se encontro o hay cualquier otro error capturado la foto se ha subido antes porque esta en el middleware
+    //! por lo cual hay borrarla para no tener basura dentro de nuestro cloudinary
+    if (req.file) {
+      //! le pasamos el req.file.path que incluye la url de cloudinary
+      deleteImgCloudinary(catchImg);
+    }
+
+    // por ultimo lanzamos el errror que se guardara en el log del backend
+    return next(error);
+  }
 };
 
 // const updateCharacter = async (req, res, next) => {
-//   //! capturo la url para si luego la tengo que borrar y le pongo el 
-//   // optional chaining (?) para que no me rompa en caso que no tenga 
+//   //! capturo la url para si luego la tengo que borrar y le pongo el
+//   // optional chaining (?) para que no me rompa en caso que no tenga
 //   // la clave path
-//   let catchImg = req.file?.path 
+//   let catchImg = req.file?.path
 
 //   try {
 //     const { id } = req.params
@@ -346,20 +344,20 @@ const updateCharacterHelper = (oldCharacter, req) => {
 //         // delete image from cloudinary
 //         deleteImgCloudinary(deleteCharacter.image);
 
-//         // Update the Movie collection, but just the characters with the 
+//         // Update the Movie collection, but just the characters with the
 //         // Id id
 //         await Movie.updateMany(
 //           { characters: id }, // filter elements to update them
 //           {
 //             // pull removes the elements
 //             // that math the filter { characters: id },
-//             $pull: { characters: id }, 
+//             $pull: { characters: id },
 //           }
 //         )
 //       }
 
 //       // If everithhing went ok, we return a 200 Ok.
-//       // Just in case, we realize a test to check if the movie character 
+//       // Just in case, we realize a test to check if the movie character
 //       // was removed correctly
 //       return res.status(200).json({
 //         deleteObject: deleteCharacter,
@@ -374,62 +372,64 @@ const updateCharacterHelper = (oldCharacter, req) => {
 // }
 
 const deleteApp = async (req, res, next) => {
-    try {
-      // We get the id from params
-      const { id } = req.params;
-  
-       // We find by Id and remove it
-      const deleteApp = await App.findByIdAndDelete(id);
-  
-      // deleteCountry contains the removed element,
-      // but sometimes dosen't work, so watch out!
-      if (deleteApp) {
-        // We check if the deleted element is in the DB,
-        // if don't, we remove the image from Cloudinary
-        // if the element was not remove, we call next and finish the execution
-        if (await App.findById(id)) {
-          // The App is still in the DB, so something went wrong
-          // and we didn't delete it!
-          // We can't do anything else, just report it!
-          next(AppErrors.FAIL_DELETING_APP);
-        } else {
-          // The App was removed successfully!
-  
-          // delete image from cloudinary
-          //deleteImgCloudinary(deleteApp.image);
-  
-          // Update the Movie collection, but just the Apps with the 
-          // Id id
-          await MobileDev.updateMany(
-            { Apps: id }, // filter elements to update them
-            {
-              // pull removes the elements
-              // that math the filter { apps: id },
-              $pull: { apps: id }, 
-            }
-          )
-        }
-  
-        // If everithhing went ok, we return a 200 Ok.
-        // Just in case, we realize a test to check if the movie App 
-        // was removed correctly
-        return res.status(200).json({
-          deleteObject: deleteApp,
-          test: (await App.findById(id)) ? AppErrors.FAIL_DELETING_APP_TEST : AppSuccess.SUCCESS_DELETING_APP,
-        });
+  try {
+    // We get the id from params
+    const { id } = req.params;
+
+    // We find by Id and remove it
+    const deleteApp = await App.findByIdAndDelete(id);
+
+    // deleteCountry contains the removed element,
+    // but sometimes dosen't work, so watch out!
+    if (deleteApp) {
+      // We check if the deleted element is in the DB,
+      // if don't, we remove the image from Cloudinary
+      // if the element was not remove, we call next and finish the execution
+      if (await App.findById(id)) {
+        // The App is still in the DB, so something went wrong
+        // and we didn't delete it!
+        // We can't do anything else, just report it!
+        next(AppErrors.FAIL_DELETING_APP);
       } else {
-        return res.status(404).json(AppErrors.FAIL_DELETING_APP);
+        // The App was removed successfully!
+
+        // delete image from cloudinary
+        //deleteImgCloudinary(deleteApp.image);
+
+        // Update the Movie collection, but just the Apps with the
+        // Id id
+        await MobileDev.updateMany(
+          { Apps: id }, // filter elements to update them
+          {
+            // pull removes the elements
+            // that math the filter { apps: id },
+            $pull: { apps: id },
+          }
+        );
       }
-    } catch (error) {
-      return next(error)
+
+      // If everithhing went ok, we return a 200 Ok.
+      // Just in case, we realize a test to check if the movie App
+      // was removed correctly
+      return res.status(200).json({
+        deleteObject: deleteApp,
+        test: (await App.findById(id))
+          ? AppErrors.FAIL_DELETING_APP_TEST
+          : AppSuccess.SUCCESS_DELETING_APP,
+      });
+    } else {
+      return res.status(404).json(AppErrors.FAIL_DELETING_APP);
     }
-}
+  } catch (error) {
+    return next(error);
+  }
+};
 
 module.exports = {
   create,
   getAll,
   getById,
-  getByName,
+  getByAppName,
   updateCharacter,
   deleteApp,
-}
+};
