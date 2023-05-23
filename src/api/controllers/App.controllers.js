@@ -128,11 +128,11 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const characterById = await Character.findById(id).populate('movies');
-    if (characterById) {
-      return res.status(200).json(characterById);
+    const appById = await App.findById(id).populate('mobileDevs');
+    if (appById) {
+      return res.status(200).json(appById);
     } else {
-      return res.status(404).json(FAIL_SEARCHING_CHARACTER_BY_ID);
+      return res.status(404).json(AppErrors.FAIL_SEARCHING_APP_BY_ID);
     }
   } catch (error) {
     return next(error);
@@ -152,7 +152,7 @@ const getByAppName = async (req, res, next) => {
     if (AppNameByName) {
       return res.status(200).json(AppNameByName);
     } else {
-      return res.status(404).json(FAIL_SEARCHING_APP_BY_NAME);
+      return res.status(404).json(AppErrors.FAIL_SEARCHING_APP_BY_NAME);
     }
   } catch (error) {
     return next(error);

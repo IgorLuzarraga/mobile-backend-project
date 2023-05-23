@@ -2,7 +2,7 @@
 const {
   create,
   getAll,
-  //   getById,
+  getById,
   getByAppName,
   //   updateCharacter,
   deleteApp,
@@ -13,6 +13,7 @@ const AppRoutes = require('express').Router();
 AppRoutes.post('/', create);
 AppRoutes.delete('/:id', deleteApp);
 AppRoutes.get('/', getAll);
+AppRoutes.get('/:id', getById);
 AppRoutes.get('/appName/:appName', getByAppName);
 
 //CharacterRoutes.post("/", upload.single("image"), create)
