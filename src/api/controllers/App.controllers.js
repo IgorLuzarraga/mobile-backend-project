@@ -19,12 +19,6 @@ const create = async (req, res, next) => {
 
   try {
     await App.syncIndexes();
-
-    // const filterBody = {
-    //   name: req.body.name,
-    //   gender: req.body.gender,
-    // }
-
     const filterBody = {
       appName: req.body.appName,
       category: req.body.category,
@@ -46,27 +40,19 @@ const create = async (req, res, next) => {
     arrayMobileDevsIds.forEach((item) => {
       newApp.mobileDevs.push(item);
     });
-
     console.log('newApp: ', newApp);
-
     // lo guardamos en la db
     const saveMobileDevs = await newApp.save();
-
     // evaluamos que se haya efectuado correctamente
     if (saveMobileDevs) {
       // si es un si: envio un 200 y un json con el objeto postedo
-
       const arrayTest = [];
-
       arrayMobileDevsIds.forEach(async (itemID) => {
         const mobileById = await MobileDev.findById(itemID);
-
         await mobileById.updateOne({
           $push: { apps: saveMobileDevs._id },
         });
-
         const testUpdateMobileDev = await MobileDev.findById(itemID);
-
         arrayTest.push({
           idMobile: itemID,
           idApp: newApp._id,
