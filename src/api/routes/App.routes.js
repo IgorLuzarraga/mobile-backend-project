@@ -1,16 +1,18 @@
 //const { upload } = require("../../middleware/files.middleware");
 const {
   create,
-//   getAll,
+  getAll,
 //   getById,
 //   getByName,
 //   updateCharacter,
-//   deleteCharacter,
+   deleteApp,
 } = require("../controllers/App.controllers");
 
 const AppRoutes = require("express").Router();
 
 AppRoutes.post("/", create)
+AppRoutes.delete("/:id", deleteApp)
+AppRoutes.get("/", getAll)
 
 //CharacterRoutes.post("/", upload.single("image"), create)
 //CharacterRoutes.post("/", create)

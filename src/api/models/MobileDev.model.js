@@ -10,7 +10,7 @@ const MobileDevSchema = new mongoose.Schema(
     OS: { type: String,  enum: ['IOS', 'Android', 'Linux']}, // Sistema Operativo
     versionOS: { type: String, required: true }, // Version Sistema Operativo
     language: { type: String, required: true }, // Lenguaje de programación
-    apps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Apps" }], // Referencia al modelo de dato de las Applicaciones
+    apps: [{ type: mongoose.Schema.Types.ObjectId, ref: "App" }], // Referencia al modelo de dato de las Applicaciones
   },
   {
     timestamps: true,

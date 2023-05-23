@@ -1,7 +1,8 @@
 const express = require("express");
 const {
   create,
-//   getAll,
+  getAll,
+  deleteMobileDev,
 //   getById,
 //   getByName,
 //   updateMovie,
@@ -11,7 +12,9 @@ const {
 const MobileRoutes = express.Router();
 
 MobileRoutes.post("/", create)
-// MobileRoutes.get("/", getAll)
+MobileRoutes.get("/", getAll)
+MobileRoutes.delete("/:id", deleteMobileDev)
+
 // MobileRoutes.get("/:id", getById)
 // MobileRoutes.get("/name/:name", getByName)
 // MobileRoutes.patch("/:id", updateMovie)

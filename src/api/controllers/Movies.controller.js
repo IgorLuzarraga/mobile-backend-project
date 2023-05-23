@@ -127,8 +127,8 @@ const deleteMovie = async (req, res, next) => {
             : MovieSuccess.SUCCESS_DELETING_MOVIE,
         test:
           testCharacter.length > 0
-            ? CharacterErrors.FAIL_UPDATING_CHARACTERS
-            : CharacterSuccess.SUCCESS_UPDATING_CHARACTERS,
+            ? CharacterErrors.FAIL_UPDATING_CHARACTER
+            : CharacterSuccess.SUCCESS_UPDATING_CHARACTER,
       });
     } else {
       return res.status(404).json(MovieErrors.FAIL_DELETING_MOVIE);

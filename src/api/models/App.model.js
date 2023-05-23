@@ -12,7 +12,8 @@ const AppSchema = new Schema(
     appName:  { type: String, required: true, unique: true },
     category:  { // Categorias d elas aplicaciones
         type: String,
-        enum: ["Business",
+        enum: [
+            "Business",
             "Communications",
             "Entertainment",
             "Social",
