@@ -3,7 +3,7 @@ const {
   create,
   getAll,
   deleteMobileDev,
-//   getById,
+ getById,
 //   getByName,
 //   updateMovie,
 //   deleteMovie,
@@ -14,8 +14,7 @@ const MobileRoutes = express.Router();
 MobileRoutes.post("/", create)
 MobileRoutes.get("/", getAll)
 MobileRoutes.delete("/:id", deleteMobileDev)
-
-// MobileRoutes.get("/:id", getById)
+MobileRoutes.get("/:id", getById)
 // MobileRoutes.get("/name/:name", getByName)
 // MobileRoutes.patch("/:id", updateMovie)
 // MobileRoutes.delete("/:id", deleteMovie)

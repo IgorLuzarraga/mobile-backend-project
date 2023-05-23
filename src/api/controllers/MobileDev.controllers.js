@@ -67,11 +67,11 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const movieById = await Movie.findById(id).populate("characters");
-    if (movieById) {
-      return res.status(200).json(movieById);
+    const mobileDevById = await MobileDev.findById(id).populate("apps");
+    if (mobileDevById) {
+      return res.status(200).json(mobileDevById);
     } else {
-      return res.status(404).json(MovieErrors.FAIL_SEARCHING_MOVIE_BY_ID);
+      return res.status(404).json(MobileDevErrors.FAIL_SEARCHING_MOBILEDEV_BY_ID);
     }
   } catch (error) {
     return next(error);
