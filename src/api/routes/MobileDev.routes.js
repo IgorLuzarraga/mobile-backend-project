@@ -6,7 +6,7 @@ const {
   getById,
   getByBrand,
   updateMobileDev,
-  addFavorite,
+  //addFavorite,
   updateApp,
 } = require('../controllers/MobileDev.controllers');
 

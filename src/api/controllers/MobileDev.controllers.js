@@ -4,13 +4,9 @@ const {
   AppErrors,
   AppSuccess,
 } = require('../../helpers/jsonResponseMsgs');
-const { MovieSuccess } = require('../../helpers/jsonResponseMsgs');
-const { CharacterErrors } = require('../../helpers/jsonResponseMsgs');
-const { CharacterSuccess } = require('../../helpers/jsonResponseMsgs');
-const Character = require('../models/Character.model');
 const MobileDev = require('../models/MobileDev.model');
-const Movie = require('../models/Movies.model');
 const App = require('../models/App.model');
+const User = require('../models/user.model');
 
 //! ---------------------------------------------------------------------
 //? -------------------------------CREATE ---------------------------------
@@ -264,10 +260,10 @@ const deleteMobileDev = async (req, res, next) => {
 
       return res.status(200).json({
         deleteMobileDev: deleteMobileDev,
-        test: (await MobileDev.findById(id))
+        testDelete: (await MobileDev.findById(id))
           ? MobileDevErrors.FAIL_DELETING_MOBILEDEV
           : MobileDevSuccess.SUCCESS_DELETING_MOBILEDEV,
-        test:
+        testUpdate:
           testApp.length > 0
             ? AppErrors.FAIL_UPDATING_APP
             : AppSuccess.SUCCESS_UPDATING_APP,

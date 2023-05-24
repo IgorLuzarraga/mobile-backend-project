@@ -1,10 +1,10 @@
 // tenemos que traernos dotenv porque tenmos la url que no queremos que se comparta publicamente
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 dotenv.config();
 
 // Nos traemos la libreria mongoose que es quien va a controlar la DB: MONGO DB
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // nos traemos la MONGO_URI del .env
 
@@ -29,7 +29,7 @@ const connect = async () => {
       `Conectada la DB 👌  en el host: ${host} con el nombre: ${name}`
     );
   } catch (error) {
-    console.log("No se ha conectado la db❌");
+    console.log('No se ha conectado la db❌');
   }
 };
 

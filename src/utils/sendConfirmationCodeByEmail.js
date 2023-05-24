@@ -5,7 +5,7 @@ const { setTestEmailSend } = require('../state/state.data');
 
 const sendConfirmationCodeByEmail = (userEmail, name, confirmationCode) => {
   setTestEmailSend(false);
-  
+
   const email = process.env.NODEMAILER_EMAIL;
   const password = process.env.NODEMAILER_PASSWORD;
 

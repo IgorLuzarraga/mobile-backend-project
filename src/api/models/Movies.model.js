@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Types of our data model
 // We create the data model
@@ -8,13 +8,13 @@ const MovieSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     year: { type: Number, required: true },
-    characters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Character" }],
+    characters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Character' }],
   },
   {
     timestamps: true,
   }
-)
+);
 
 // we create the data schema model for mongoose
-const Movie = mongoose.model("Movie", MovieSchema)
-module.exports = Movie
+const Movie = mongoose.model('Movie', MovieSchema);
+module.exports = Movie;

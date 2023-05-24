@@ -6,7 +6,7 @@ const generateToken = (id, email) => {
   if (!id) {
     throw new Error('id is missing');
   }
-  
+
   if (!email) {
     throw new Error('email is missing');
   }

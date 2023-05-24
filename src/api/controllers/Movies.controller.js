@@ -1,9 +1,9 @@
-const { MovieErrors } = require("../../helpers/jsonResponseMsgs");
-const { MovieSuccess } = require("../../helpers/jsonResponseMsgs");
-const { CharacterErrors } = require("../../helpers/jsonResponseMsgs");
-const { CharacterSuccess } = require("../../helpers/jsonResponseMsgs");
-const Character = require("../models/Character.model");
-const Movie = require("../models/Movies.model");
+const { MovieErrors } = require('../../helpers/jsonResponseMsgs');
+const { MovieSuccess } = require('../../helpers/jsonResponseMsgs');
+const { CharacterErrors } = require('../../helpers/jsonResponseMsgs');
+const { CharacterSuccess } = require('../../helpers/jsonResponseMsgs');
+const Character = require('../models/Character.model');
+const Movie = require('../models/Movies.model');
 
 //! ---------------------------------------------------------------------
 //? -------------------------------POST ---------------------------------
@@ -28,8 +28,8 @@ const create = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 const getAll = async (req, res, next) => {
   try {
-    const allMovies = await Movie.find().populate("characters");
-    console.log("getAll movies: ", allMovies)
+    const allMovies = await Movie.find().populate('characters');
+    console.log('getAll movies: ', allMovies);
     if (allMovies) {
       return res.status(200).json(allMovies);
     } else {
@@ -46,7 +46,7 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const movieById = await Movie.findById(id).populate("characters");
+    const movieById = await Movie.findById(id).populate('characters');
     if (movieById) {
       return res.status(200).json(movieById);
     } else {
@@ -63,11 +63,10 @@ const getById = async (req, res, next) => {
 
 const getByName = async (req, res, next) => {
   try {
-    
     const { name } = req.params;
-    console.log("MOVIE NAME: ", name)
+    console.log('MOVIE NAME: ', name);
 
-    const movieByName = await Movie.find({ name }).populate('character')
+    const movieByName = await Movie.find({ name }).populate('character');
 
     if (movieByName) {
       return res.status(200).json(movieByName);
@@ -111,9 +110,9 @@ const deleteMovie = async (req, res, next) => {
 
     const deleteMovie = await Movie.findByIdAndDelete(id);
 
-    // esto anterior nos devuelve siempre el elemento buscado pero puede ser que 
+    // esto anterior nos devuelve siempre el elemento buscado pero puede ser que
     //no haya borrado por eso cuidado
-    
+
     if (deleteMovie) {
       await Character.updateMany({ movies: id }, { $pull: { movies: id } });
 
@@ -121,10 +120,9 @@ const deleteMovie = async (req, res, next) => {
 
       return res.status(200).json({
         deleteMovie: deleteMovie,
-        test: 
-          (await Movie.findById(id)) 
-            ? MovieErrors.FAIL_DELETING_MOVIE 
-            : MovieSuccess.SUCCESS_DELETING_MOVIE,
+        test: (await Movie.findById(id))
+          ? MovieErrors.FAIL_DELETING_MOVIE
+          : MovieSuccess.SUCCESS_DELETING_MOVIE,
         test:
           testCharacter.length > 0
             ? CharacterErrors.FAIL_UPDATING_CHARACTER

@@ -1,7 +1,7 @@
-const { isAuth, isAuthAdmin } = require('../../middleware/auth.middleware');
+const { isAuth } = require('../../middleware/auth.middleware');
 const { upload } = require('../../middleware/files.middleware');
 const {
-  register,
+  //register,
   registerSlow,
   sendCode,
   registerWithRedirect,
@@ -12,15 +12,15 @@ const {
   update,
   deleteUser,
   getAll,
-  getById
+  getById,
 } = require('../controllers/user.controllers');
 
 const express = require('express');
 const UserRoutes = express.Router();
 
 // HOLA prueba
-UserRoutes.get("/", getAll)
-UserRoutes.get("/:id", getById)
+UserRoutes.get('/', getAll);
+UserRoutes.get('/:id', getById);
 UserRoutes.get('/register', upload.single('image'), registerWithRedirect);
 UserRoutes.post('/register', upload.single('image'), registerSlow);
 UserRoutes.get('/forgotpassword/forgotpassword/', changeForgottenPassword);

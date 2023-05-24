@@ -1,11 +1,8 @@
-const { deleteImgCloudinary } = require('../../middleware/files.middleware');
-const Character = require('../models/Character.model');
-const Movie = require('../models/Movies.model');
 const App = require('../models/App.model');
 const MobileDev = require('../models/MobileDev.model');
 const User = require('../models/user.model');
 const {
-  MobileDevErrors,
+  //MobileDevErrors,
   AppErrors,
   AppSuccess,
 } = require('../../helpers/jsonResponseMsgs');
@@ -164,7 +161,7 @@ const updateApp = async (req, res, next) => {
     if (appById) {
       const patchApp = updateAppHelper(appById, req);
       patchApp._id = id;
-      const saveApp = await App.findByIdAndUpdate(id, patchApp); // Guardar los cambios en la base de datos
+      await App.findByIdAndUpdate(id, patchApp); // Guardar los cambios en la base de datos
       return res.status(200).json(await App.findById(id)); // Responder con el objeto actualizado
     } else {
       return res.status(404).json(AppErrors.FAIL_UPDATING_APP); // Manejar el caso cuando no se encuentra la aplicación

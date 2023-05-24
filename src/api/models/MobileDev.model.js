@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Types of our data model
 // We create the data model
@@ -7,16 +7,16 @@ const mongoose = require("mongoose");
 const MobileDevSchema = new mongoose.Schema(
   {
     brand: { type: String, required: true, unique: true }, // Marca Movil
-    OS: { type: String,  enum: ['IOS', 'Android', 'Linux']}, // Sistema Operativo
+    OS: { type: String, enum: ['IOS', 'Android', 'Linux'] }, // Sistema Operativo
     versionOS: { type: String, required: true }, // Version Sistema Operativo
     language: { type: String, required: true }, // Lenguaje de programación
-    apps: [{ type: mongoose.Schema.Types.ObjectId, ref: "App" }], // Referencia al modelo de dato de las Applicaciones
+    apps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'App' }], // Referencia al modelo de dato de las Applicaciones
   },
   {
     timestamps: true,
   }
-)
+);
 
 // we create the data schema model for mongoose
-const MobileDev = mongoose.model("MobileDev", MobileDevSchema)
-module.exports = MobileDev
+const MobileDev = mongoose.model('MobileDev', MobileDevSchema);
+module.exports = MobileDev;

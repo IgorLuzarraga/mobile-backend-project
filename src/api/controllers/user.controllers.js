@@ -1,5 +1,4 @@
 const { deleteImgCloudinary } = require('../../middleware/files.middleware');
-const setError = require('../../helpers/handle-error');
 const randomCode = require('../../utils/randomCode');
 const sendConfirmationCodeByEmail = require('../../utils/sendConfirmationCodeByEmail');
 const bcrypt = require('bcrypt');
@@ -116,7 +115,7 @@ const registerSlow = async (req, res, next) => {
           text: `tu codigo es ${confirmationCode}, gracias por confiar en nosotros ${userName}`,
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function (error) {
           if (error) {
             return res.status(404).json({
               user: userSave,
@@ -147,7 +146,7 @@ const registerWithRedirect = async (req, res, next) => {
 
   try {
     let confirmationCode = randomCode();
-    const { email, name } = req.body;
+    //const { email, name } = req.body;
 
     const userExist = await User.findOne(
       { email: req.body.email },
@@ -288,7 +287,7 @@ const login = async (req, res, next) => {
 //   } catch (error) {}
 // };
 
-const changeForgottenPassword = async (req, res, next) => {
+const changeForgottenPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const userDb = await User.findOne({ email });
@@ -299,7 +298,9 @@ const changeForgottenPassword = async (req, res, next) => {
     } else {
       return res.status(404).json(UserErrors.FAIL_REGISTRERING_USER);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const sendPasswordByEmail = async (req, res, next) => {
@@ -330,7 +331,7 @@ const sendPasswordByEmail = async (req, res, next) => {
       if you didn't made it, please contact us!`,
     };
 
-    transporter.sendMail(mailOptions, async function (error, info) {
+    transporter.sendMail(mailOptions, async function (error) {
       if (error) {
         return res.status(404).json('dont send email and dont update user');
       } else {
