@@ -8,7 +8,7 @@ const {
   getByAppName,
   updateApp,
   deleteApp,
-  addFavorite,
+  toggleFavorite,
   updateMobileDev,
 } = require('../controllers/App.controllers');
 
@@ -21,7 +21,7 @@ AppRoutes.get('/:id', getById);
 AppRoutes.get('/appName/:appName', getByAppName);
 AppRoutes.patch('/:id', updateApp);
 AppRoutes.patch('/updateMobileDev/:id', updateMobileDev);
-AppRoutes.put('/favorite/:id', [isAuth], addFavorite); //----id del usuario
+AppRoutes.put('/favorite/:id', [isAuth], toggleFavorite); //----id del usuario
 
 //CharacterRoutes.post("/", upload.single("image"), create)
 //CharacterRoutes.post("/", create)

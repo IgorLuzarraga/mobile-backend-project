@@ -98,7 +98,9 @@ const create = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const allMobileDevs = await MobileDev.find().populate('apps');
+    const allMobileDevs = await MobileDev.find()
+      .populate('apps')
+      .populate('users');
     //console.log("getAll movies: ", allMobileDevs)
     if (allMobileDevs) {
       return res.status(200).json(allMobileDevs);
@@ -116,7 +118,9 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const mobileDevById = await MobileDev.findById(id).populate('apps');
+    const mobileDevById = await MobileDev.findById(id)
+      .populate('apps')
+      .populate('users');
     if (mobileDevById) {
       return res.status(200).json(mobileDevById);
     } else {
@@ -154,18 +158,24 @@ const getByBrand = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ----------------------------- UPDATE --------------------------------
 //! ---------------------------------------------------------------------
+
 const updateMobileDev = async (req, res, next) => {
   try {
+    const filterBody = {
+      brand: req.body.brand,
+      OS: req.body.OS,
+      versionOS: req.body.versionOS,
+      language: req.body.language,
+    };
     const { id } = req.params;
-    const oldMobileDev = await MobileDev.findByIdAndUpdate(id, req.body);
-    if (updateMobileDev) {
-      return res.status(200).json({
-        oldMobileDev: oldMobileDev,
-        newMobileDev: await MobileDev.findById(id),
-        Status: MobileDevSuccess.SUCCESS_UPDATING_MOBILEDEV, //Añadido reciente.
-      });
+    const mobilDevById = await MobileDev.findById(id);
+    if (mobilDevById) {
+      const patchApp = new MobileDev(filterBody);
+      patchApp._id = id;
+      await MobileDev.findByIdAndUpdate(id, patchApp); // Guardar los cambios en la base de datos
+      return res.status(200).json(await MobileDev.findById(id)); // Responder con el objeto actualizado
     } else {
-      return res.status(404).json(MobileDevErrors.FAIL_UPDATING_MOBILEDEV);
+      return res.status(404).json(MobileDevErrors.FAIL_UPDATING_MOBILEDEV); // Manejar el caso cuando no se encuentra la aplicación
     }
   } catch (error) {
     return next(error);
@@ -237,16 +247,15 @@ const updateApp = async (req, res, next) => {
 const addFavorite = async (req, res, next) => {
   try {
     const mobileFav = await MobileDev.findById(req.params.id); //--->MobileDEv
-
     const user = await User.findById(req.user._id); //--->Nuestro user
 
     if (!mobileFav.users.includes(user._id)) {
       await mobileFav.updateOne({ $push: { users: user._id } });
-      await user.updateOne({ $push: { events: mobileFav._id } });
+      await user.updateOne({ $push: { mobileDevs: mobileFav._id } });
       res.status(200).json('The activity has been added');
     } else {
       await mobileFav.updateOne({ $pull: { users: user._id } });
-      await user.updateOne({ $pull: { events: mobileFav._id } });
+      await user.updateOne({ $pull: { mobileDevs: mobileFav._id } });
       res.status(200).json('The activity has not been added');
     }
   } catch (error) {

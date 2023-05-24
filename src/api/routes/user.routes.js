@@ -13,6 +13,7 @@ const {
   deleteUser,
   getAll,
   getById,
+  checkNewUser,
 } = require('../controllers/user.controllers');
 
 const express = require('express');
@@ -28,7 +29,7 @@ UserRoutes.post('/login', login);
 UserRoutes.patch('/changepassword', [isAuth], changePassword);
 UserRoutes.patch('/update/update', [isAuth], upload.single('image'), update);
 UserRoutes.delete('/', [isAuth], deleteUser);
-
+UserRoutes.post('/check', checkNewUser);
 //!---------------- REDIRECT-------------------------------
 UserRoutes.get('/register/sendMail/:id', sendCode);
 UserRoutes.get('/sendPasswordByEmail/:id', sendPasswordByEmail);

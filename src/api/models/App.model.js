@@ -34,6 +34,11 @@ const AppSchema = new Schema(
       ref: 'MobileDev',
       required: true,
     },
+    users: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'User',
+      required: false,
+    },
   },
   {
     timestamps: true,

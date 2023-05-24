@@ -273,20 +273,6 @@ const login = async (req, res, next) => {
 //! ------------------CAMBIO DE CONTRASEÑA CUANDO NO ESTAS LOGADO---------------
 //? -----------------------------------------------------------------------------
 
-// const changeForgottenPassword = async (req, res, next) => {
-//   try {
-//     const { email } = req.body;
-//     const userDb = await User.findOne({ email });
-//     if (userDb) {
-//       return res.redirect(
-//         `${BASE_URL_COMPLETE}/api/v1/users/sendPasswordByEmail/${userDb._id}`
-//       );
-//     } else {
-//       return res.status(404).json('User no register');
-//     }
-//   } catch (error) {}
-// };
-
 const changeForgottenPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -398,7 +384,11 @@ const update = async (req, res, next) => {
   let catchImg = req.file?.path;
 
   try {
-    const patchUser = new User(req.body);
+    const filterBody = {
+      name: req.body.name,
+      gender: req.body.gender,
+    };
+    const patchUser = new User(filterBody);
 
     if (req.file) {
       patchUser.image = req.file.path;
@@ -498,6 +488,51 @@ const getById = async (req, res, next) => {
   }
 };
 
+//! ------------------------------------------------------------------------
+//? -------------------------- CHECK NEW USER------------------------------
+//! ------------------------------------------------------------------------
+
+const checkNewUser = async (req, res, next) => {
+  try {
+    const { email, confirmationCode } = req.body;
+    const userExists = await User.findOne({ email });
+    if (!userExists) {
+      return res.status(404).json(UserErrors.FAIL_SEARCHING_USER);
+    } else {
+      // cogemos que comparamos que el codigo que recibimos por la req.body y el del userExists es igual
+      if (confirmationCode === userExists.confirmationCode) {
+        // si es igual actualizamos la propiedad check y la ponemos a true
+        await userExists.updateOne({ check: true });
+        // hacemos un testeo de que este user se ha actualizado correctamente, hacemos un findOne
+        const updateUser = await User.findOne({ email });
+
+        // este finOne nos sirve para hacer un ternario que nos diga si la propiedad vale true o false
+        return res.status(200).json({
+          testCheckOk: updateUser.check == true ? true : false,
+        });
+      } else {
+        /// En caso dec equivocarse con el codigo lo borramos de la base datos y lo mandamos al registro
+        await User.findByIdAndDelete(userExists._id);
+
+        // borramos la imagen
+        deleteImgCloudinary(userExists.image);
+
+        // devolvemos un 200 con el test de ver si el delete se ha hecho correctamente
+        return res.status(200).json({
+          userExists,
+          check: false,
+          delete: (await User.findById(userExists._id))
+            ? UserErrors.FAIL_DELETING_USER
+            : UserSuccess.SUCCESS_DELETING_USER,
+        });
+      }
+    }
+  } catch (error) {
+    // siempre en el catch devolvemos un 500 con el error general
+    return next(setError(500, 'General error check code'));
+  }
+};
+
 module.exports = {
   register,
   registerSlow,
@@ -510,6 +545,6 @@ module.exports = {
   update,
   deleteUser,
   getAll,
-  //getAllMobilesDev,
   getById,
+  checkNewUser,
 };

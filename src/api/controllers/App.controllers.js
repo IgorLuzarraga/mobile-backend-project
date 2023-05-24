@@ -95,7 +95,7 @@ const create = async (req, res, next) => {
 const getAll = async (req, res, next) => {
   try {
     // ES EL FIND DE LA QUERY DE MONGOOSE NOS TRAE TODOS LOS ELEMENTOS
-    const allApp = await App.find().populate('mobileDevs');
+    const allApp = await App.find().populate('mobileDevs').populate('users');
     if (allApp) {
       return res.status(200).json(allApp);
     } else {
@@ -112,7 +112,9 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const appById = await App.findById(id).populate('mobileDevs');
+    const appById = await App.findById(id)
+      .populate('mobileDevs')
+      .populate('users');
     if (appById) {
       return res.status(200).json(appById);
     } else {
@@ -146,20 +148,26 @@ const getByAppName = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ----------------------------- UPDATE --------------------------------
 //! ---------------------------------------------------------------------
-const updateAppHelper = (oldApp, req) => {
-  const newApp = new App(oldApp);
-  const oldAppKeys = Object.keys(req.body);
-  oldAppKeys.forEach((key) => {
-    newApp[key] = req.body[key];
-  });
-  return newApp;
-};
+// const updateAppHelper = (oldApp, req) => {
+// const newApp = new App(oldApp);
+// const oldAppKeys = Object.keys(req.body);
+// oldAppKeys.forEach((key) => {
+//   newApp[key] = req.body[key];
+// });
+// return newApp;
+// };
 const updateApp = async (req, res, next) => {
   try {
+    const filterBody = {
+      appName: req.body.appName,
+      category: req.body.category,
+      codeLanguages: req.body.codeLanguages,
+      appSize: req.body.appSize,
+    };
     const { id } = req.params;
     const appById = await App.findById(id);
     if (appById) {
-      const patchApp = updateAppHelper(appById, req);
+      const patchApp = new App(filterBody);
       patchApp._id = id;
       await App.findByIdAndUpdate(id, patchApp); // Guardar los cambios en la base de datos
       return res.status(200).json(await App.findById(id)); // Responder con el objeto actualizado
@@ -172,7 +180,7 @@ const updateApp = async (req, res, next) => {
 };
 
 //! ---------------------------------------------------------------------
-//? ----------------------------- UPDATE MOBILEDEV--------------------------------
+//? ------------------------------UPDATE MOBILEDEV--------------------------------
 //! ---------------------------------------------------------------------
 
 const updateMobileDev = async (req, res, next) => {
@@ -252,19 +260,18 @@ const deleteApp = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 //? ------------------------------GETFAV --------------------------------
 //! ---------------------------------------------------------------------
-const addFavorite = async (req, res, next) => {
+const toggleFavorite = async (req, res, next) => {
   try {
-    const appFav = await App.findById(req.params.id); //--->MobileDEv
-
+    const appFav = await App.findById(req.params.id); //--->App
     const user = await User.findById(req.user._id); //--->Nuestro user
 
     if (!appFav.users.includes(user._id)) {
       await appFav.updateOne({ $push: { users: user._id } });
-      await user.updateOne({ $push: { events: appFav._id } });
+      await user.updateOne({ $push: { apps: appFav._id } });
       res.status(200).json('The activity has been added');
     } else {
       await appFav.updateOne({ $pull: { users: user._id } });
-      await user.updateOne({ $pull: { events: appFav._id } });
+      await user.updateOne({ $pull: { apps: appFav._id } });
       res.status(200).json('The activity has not been added');
     }
   } catch (error) {
@@ -279,6 +286,6 @@ module.exports = {
   getByAppName,
   updateApp,
   deleteApp,
-  addFavorite,
+  toggleFavorite,
   updateMobileDev,
 };

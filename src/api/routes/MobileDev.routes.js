@@ -1,4 +1,5 @@
 const express = require('express');
+const { isAuth } = require('../../middleware/auth.middleware');
 const {
   create,
   getAll,
@@ -6,7 +7,7 @@ const {
   getById,
   getByBrand,
   updateMobileDev,
-  //addFavorite,
+  addFavorite,
   updateApp,
 } = require('../controllers/MobileDev.controllers');
 
@@ -19,6 +20,6 @@ MobileRoutes.get('/:id', getById);
 MobileRoutes.get('/brand/:brand', getByBrand);
 MobileRoutes.patch('/:id', updateMobileDev);
 MobileRoutes.patch('/updateApp/:id', updateApp);
-//MobileRoutes.put('/favorite/:id', [isAuth], addFavorite);
+MobileRoutes.put('/favorite/:id', [isAuth], addFavorite);
 
 module.exports = MobileRoutes;

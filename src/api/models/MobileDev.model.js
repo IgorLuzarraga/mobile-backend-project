@@ -7,11 +7,19 @@ const mongoose = require('mongoose');
 const MobileDevSchema = new mongoose.Schema(
   {
     brand: { type: String, required: true, unique: true }, // Marca Movil
-    OS: { type: String, enum: ['IOS', 'Android', 'Linux'] }, // Sistema Operativo
+    OS: { type: String, enum: ['IOS', 'Android', 'Linux'], required: true }, // Sistema Operativo
     versionOS: { type: String, required: true }, // Version Sistema Operativo
-    language: { type: String, required: true }, // Lenguaje de programación
+    language: { type: String, required: true }, // Lenguaje de interface
+
     apps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'App' }], // Referencia al modelo de dato de las Applicaciones
+
+    users: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'User',
+      required: false,
+    },
   },
+
   {
     timestamps: true,
   }
