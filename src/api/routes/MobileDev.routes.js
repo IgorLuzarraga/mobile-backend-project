@@ -7,8 +7,7 @@ const {
   getByBrand,
   updateMobileDev,
   addFavorite,
-  //   updateMovie,
-  //   deleteMovie,
+  updateApp,
 } = require('../controllers/MobileDev.controllers');
 
 const MobileRoutes = express.Router();
@@ -19,8 +18,7 @@ MobileRoutes.delete('/:id', deleteMobileDev);
 MobileRoutes.get('/:id', getById);
 MobileRoutes.get('/brand/:brand', getByBrand);
 MobileRoutes.patch('/:id', updateMobileDev);
+MobileRoutes.patch('/updateApp/:id', updateApp);
 //MobileRoutes.put('/favorite/:id', [isAuth], addFavorite);
-// MobileRoutes.patch("/:id", updateMovie)
-// MobileRoutes.delete("/:id", deleteMovie)
 
 module.exports = MobileRoutes;

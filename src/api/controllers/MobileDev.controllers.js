@@ -13,61 +13,75 @@ const Movie = require('../models/Movies.model');
 const App = require('../models/App.model');
 
 //! ---------------------------------------------------------------------
-//? -------------------------------CREATE--------------------------------
+//? -------------------------------CREATE ---------------------------------
 //! ---------------------------------------------------------------------
 const create = async (req, res, next) => {
   try {
-    await MobileDev.syncIndexes();
-    const filterBody = {
-      brand: req.body.brand,
-      OS: req.body.OS,
-      versionOS: req.body.versionOS,
-      language: req.body.language,
-    };
-
-    const newMobileDev = new MobileDev(filterBody);
-
-    const { apps } = req.body;
-
-    const arrayAppsIds = apps.split(',');
-    arrayAppsIds.forEach((item) => {
-      newMobileDev.apps.push(item);
-    });
-
-    const saveApps = await newMobileDev.save();
-
-    if (saveApps) {
-      const arrayTest = [];
-
-      arrayAppsIds.forEach(async (itemID) => {
-        const appId = await App.findById(itemID);
-
-        await appId.updateOne({
-          $push: { apps: saveApps._id },
-        });
-
-        const testAppUpdate = await App.findById(itemID);
-
-        arrayTest.push({
-          idApp: itemID,
-          idMobile: newMobileDev._id,
-          testAppUpdate: testAppUpdate.mobileDevs.includes(saveApps._id)
-            ? true
-            : false,
-        });
-      });
-
-      return res.status(200).json({
-        newMobileDevs: saveApps,
-        testAppsUpdate: arrayTest,
-      });
+    const newMobileDev = new MobileDev(req.body);
+    const saveMobileDevs = await newMobileDev.save();
+    if (saveMobileDevs) {
+      return res.status(200).json(saveMobileDevs);
     } else {
-      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
+      return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV); //--->comentario feedback
     }
   } catch (error) {
     return next(error);
   }
 };
+
+// const create = async (req, res, next) => {
+//   try {
+//     await MobileDev.syncIndexes();
+//     const filterBody = {
+//       brand: req.body.brand,
+//       OS: req.body.OS,
+//       versionOS: req.body.versionOS,
+//       language: req.body.language,
+//     };
+
+//     const newMobileDev = new MobileDev(filterBody);
+
+//     const { apps } = req.body;
+
+//     const arrayAppsIds = apps.split(',');
+//     arrayAppsIds.forEach((item) => {
+//       newMobileDev.apps.push(item);
+//     });
+
+//     const saveApps = await newMobileDev.save();
+
+//     if (saveApps) {
+//       const arrayTest = [];
+
+//       arrayAppsIds.forEach(async (itemID) => {
+//         const appId = await App.findById(itemID);
+
+//         await appId.updateOne({
+//           $push: { apps: saveApps._id },
+//         });
+
+//         const testAppUpdate = await App.findById(itemID);
+
+//         arrayTest.push({
+//           idApp: itemID,
+//           idMobile: newMobileDev._id,
+//           testAppUpdate: testAppUpdate.mobileDevs.includes(saveApps._id)
+//             ? true
+//             : false,
+//         });
+//       });
+
+//       return res.status(200).json({
+//         newMobileDevs: saveApps,
+//         testAppsUpdate: arrayTest,
+//       });
+//     } else {
+//       return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
+//     }
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
 
 //!OLD VERSION BELOW//
 // // const create = async (req, res, next) => {
@@ -267,6 +281,27 @@ const deleteMobileDev = async (req, res, next) => {
 };
 
 //! ---------------------------------------------------------------------
+//? ----------------------------- UPDATE APP--------------------------------
+//! ---------------------------------------------------------------------
+
+const updateApp = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const oldMobileDev = await MobileDev.findByIdAndUpdate(id, req.body);
+    if (oldMobileDev) {
+      return res.status(200).json({
+        oldMobileDev: oldMobileDev,
+        newMobileDev: await MobileDev.findById(id), //meter mensaje feedback
+      });
+    } else {
+      return res.status(404).json(MobileDevErrors.FAIL_UPDATING_MOBILEDEV);
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//! ---------------------------------------------------------------------
 //? ------------------------------GETFAV --------------------------------
 //! ---------------------------------------------------------------------
 
@@ -296,7 +331,7 @@ module.exports = {
   getById,
   getByBrand,
   updateMobileDev,
-  //deleteMovie,
   deleteMobileDev,
   addFavorite,
+  updateApp,
 };

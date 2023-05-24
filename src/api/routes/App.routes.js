@@ -9,6 +9,7 @@ const {
   updateApp,
   deleteApp,
   addFavorite,
+  updateMobileDev,
 } = require('../controllers/App.controllers');
 
 const AppRoutes = require('express').Router();
@@ -19,6 +20,7 @@ AppRoutes.get('/', getAll);
 AppRoutes.get('/:id', getById);
 AppRoutes.get('/appName/:appName', getByAppName);
 AppRoutes.patch('/:id', updateApp);
+AppRoutes.patch('/updateMobileDev/:id', updateMobileDev);
 AppRoutes.put('/favorite/:id', [isAuth], addFavorite); //----id del usuario
 
 //CharacterRoutes.post("/", upload.single("image"), create)
