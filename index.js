@@ -28,14 +28,10 @@ app.use(express.urlencoded({ limit: '5mb', extended: false }));
 
 //! -----ROUTES-----------
 const UserRoutes = require('./src/api/routes/user.routes');
-const CharacterRoutes = require('./src/api/routes/Character.routes');
-const MovieRoutes = require('./src/api/routes/Movie.routes');
 const MobileDevRoutes = require('./src/api/routes/MobileDev.routes');
 const AppRoutes = require('./src/api/routes/App.routes');
 
 app.use('/api/v1/users', UserRoutes);
-app.use('/api/v1/character/', CharacterRoutes);
-app.use('/api/v1/movies/', MovieRoutes);
 app.use('/api/v1/mobilesDev', MobileDevRoutes);
 app.use('/api/v1/app', AppRoutes);
 

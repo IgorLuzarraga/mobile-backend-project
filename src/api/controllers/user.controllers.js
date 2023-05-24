@@ -398,8 +398,6 @@ const update = async (req, res, next) => {
   let catchImg = req.file?.path;
 
   try {
-    console.log('req.body: ', req.body);
-
     const patchUser = new User(req.body);
 
     if (req.file) {

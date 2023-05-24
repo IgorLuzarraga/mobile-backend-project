@@ -40,20 +40,15 @@ const UserSchema = new mongoose.Schema(
     image: {
       type: String,
     },
-    // movies: {
-    //   type: [mongoose.Schema.Types.ObjectId],
-    //   ref: "Movie",
-    //   required: true
-    // },
     mobileDevs: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'MobileDev',
-      required: true,
+      required: false,
     },
     apps: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'App',
-      required: true,
+      required: false,
     },
   },
   {
