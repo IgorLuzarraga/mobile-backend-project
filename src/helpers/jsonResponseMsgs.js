@@ -1,3 +1,18 @@
+const UserSuccess = {
+  SUCCESS_DELETING_USER: 'Success deleting user',
+};
+
+const UserErrors = {
+  FAIL_CREATING_USER: 'Fail creating user',
+  FAIL_UPDATING_USER: 'Fail updating user',
+  FAIL_SEARCHING_USER: 'Fail searchinng users',
+  FAIL_SEARCHING_USER_BY_ID: 'Fail searchinng user by Id',
+  FAIL_SEARCHING_USER_BY_NAME: 'Fail searchinng user by Name',
+  FAIL_DELETING_USER: 'Fail deleting user',
+  FAIL_MATCHING_PASSWORDS: `Fail matching passwords`,
+  FAIL_REGISTRERING_USER: `Fail registrering user`,
+};
+
 const MovieErrors = {
   FAIL_CREATING_MOVIE: 'Fail creating movie',
   FAIL_UPDATING_MOVIE: 'Fail updating movie',
@@ -22,7 +37,7 @@ const MobileDevErrors = {
 
 const MobileDevSuccess = {
   SUCCESS_DELETING_MOBILEDEV: 'Success deleting mobile dev',
-  SUCCESS_UPDATING_MOBILEDEV: 'Success updating mobile dev',  //Añadida recientemente por J
+  SUCCESS_UPDATING_MOBILEDEV: 'Success updating mobile dev', //Añadida recientemente por J
 };
 
 const AppErrors = {
@@ -53,6 +68,8 @@ const CharacterSuccess = {
   SUCCESS_UPDATING_CHARACTER: 'Success updating character',
 };
 
+module.exports.UserSuccess = UserSuccess;
+module.exports.UserErrors = UserErrors;
 module.exports.MovieErrors = MovieErrors;
 module.exports.MovieSuccess = MovieSuccess;
 module.exports.MobileDevErrors = MobileDevErrors;

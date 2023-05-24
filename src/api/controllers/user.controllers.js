@@ -360,37 +360,6 @@ const sendPasswordByEmail = async (req, res, next) => {
 //! ------------------CAMBIO DE CONTRASEÑA CUANDO YA SE ESTA LOGEADO---------------
 //? -----------------------------------------------------------------------------
 
-// const changePassword = async (req, res, next) => {
-//   try {
-//     const { password, newPassword } = req.body;
-
-//     const { _id } = req.user;
-
-//     if (bcrypt.compareSync(password, req.user.password)) {
-
-//       const newPasswordHashed = bcrypt.hashSync(newPassword, 10);
-
-//       await User.findByIdAndUpdate(_id, { password: newPasswordHashed });
-
-//       const userUpdate = await User.findById(_id);
-
-//       if (bcrypt.compareSync(newPassword, userUpdate.password)) {
-//         return res.status(200).json({
-//           updateUser: true,
-//         });
-//       } else {
-//         return res.status(200).json({
-//           updateUser: false,
-//         });
-//       }
-//     } else {
-//       return res.status(404).json('passwords dont match');
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// }
-
 const changePassword = async (req, res, next) => {
   try {
     const { password, newPassword } = req.body;
@@ -422,7 +391,7 @@ const changePassword = async (req, res, next) => {
 };
 
 //! -----------------------------------------------------------------------------
-//? ---------------------------------UPDATE--------------------------------------
+//? ---------------------------------UPDATE-------------------------------------- // AQUÍ
 //! -----------------------------------------------------------------------------
 const update = async (req, res, next) => {
   let catchImg = req.file?.path;
@@ -502,7 +471,7 @@ const deleteUser = async (req, res, next) => {
 //! ---------------------------------------------------------------------
 const getAll = async (req, res, next) => {
   try {
-    const allUsers = await User.find().populate('mobileDevs');
+    const allUsers = await User.find().populate('mobileDevs').populate(`apps`);
     if (allUsers) {
       return res.status(200).json(allUsers);
     } else {

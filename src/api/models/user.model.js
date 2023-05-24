@@ -42,19 +42,19 @@ const UserSchema = new mongoose.Schema(
     },
     // movies: {
     //   type: [mongoose.Schema.Types.ObjectId],
-    //   ref: "Movie", 
+    //   ref: "Movie",
     //   required: true
     // },
     mobileDevs: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "MobileDev", 
-      required: true
+      ref: 'MobileDev',
+      required: true,
     },
-    // apps: {
-    //   type: [mongoose.Schema.Types.ObjectId],
-    //   ref: "App", 
-    //   required: true
-    // },
+    apps: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'App',
+      required: true,
+    },
   },
   {
     timestamps: true, // timestamp
