@@ -3,6 +3,7 @@ const Character = require('../models/Character.model');
 const Movie = require('../models/Movies.model');
 const App = require('../models/App.model');
 const MobileDev = require('../models/MobileDev.model');
+const User = require('../models/user.model');
 const {
   MobileDevErrors,
   AppErrors,
@@ -217,6 +218,28 @@ const deleteApp = async (req, res, next) => {
     return next(error);
   }
 };
+//! ---------------------------------------------------------------------
+//? ------------------------------GETFAV --------------------------------
+//! ---------------------------------------------------------------------
+const addFavorite = async (req, res, next) => {
+  try {
+    const appFav = await App.findById(req.params.id); //--->MobileDEv
+
+    const user = await User.findById(req.user._id); //--->Nuestro user
+
+    if (!appFav.users.includes(user._id)) {
+      await appFav.updateOne({ $push: { users: user._id } });
+      await user.updateOne({ $push: { events: appFav._id } });
+      res.status(200).json('The activity has been added');
+    } else {
+      await appFav.updateOne({ $pull: { users: user._id } });
+      await user.updateOne({ $pull: { events: appFav._id } });
+      res.status(200).json('The activity has not been added');
+    }
+  } catch (error) {
+    return next('error handle add event', error);
+  }
+};
 
 module.exports = {
   create,
@@ -225,4 +248,5 @@ module.exports = {
   getByAppName,
   updateApp,
   deleteApp,
+  addFavorite,
 };

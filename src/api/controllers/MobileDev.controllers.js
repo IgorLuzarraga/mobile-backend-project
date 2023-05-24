@@ -266,6 +266,30 @@ const deleteMobileDev = async (req, res, next) => {
   }
 };
 
+//! ---------------------------------------------------------------------
+//? ------------------------------GETFAV --------------------------------
+//! ---------------------------------------------------------------------
+
+const addFavorite = async (req, res, next) => {
+  try {
+    const mobileFav = await MobileDev.findById(req.params.id); //--->MobileDEv
+
+    const user = await User.findById(req.user._id); //--->Nuestro user
+
+    if (!mobileFav.users.includes(user._id)) {
+      await mobileFav.updateOne({ $push: { users: user._id } });
+      await user.updateOne({ $push: { events: mobileFav._id } });
+      res.status(200).json('The activity has been added');
+    } else {
+      await mobileFav.updateOne({ $pull: { users: user._id } });
+      await user.updateOne({ $pull: { events: mobileFav._id } });
+      res.status(200).json('The activity has not been added');
+    }
+  } catch (error) {
+    return next('error handle add event', error);
+  }
+};
+
 module.exports = {
   create,
   getAll,
@@ -274,4 +298,5 @@ module.exports = {
   updateMobileDev,
   //deleteMovie,
   deleteMobileDev,
+  addFavorite,
 };
