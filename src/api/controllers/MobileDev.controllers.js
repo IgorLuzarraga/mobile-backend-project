@@ -13,7 +13,13 @@ const User = require('../models/user.model');
 //! ---------------------------------------------------------------------
 const create = async (req, res, next) => {
   try {
-    const newMobileDev = new MobileDev(req.body);
+    const filterBody = {
+      brand: req.body.brand,
+      OS: req.body.OS,
+      versionOS: req.body.versionOS,
+      language: req.body.language,
+    };
+    const newMobileDev = new MobileDev(filterBody);
     const saveMobileDevs = await newMobileDev.save();
     if (saveMobileDevs) {
       return res.status(200).json(saveMobileDevs);
@@ -25,77 +31,9 @@ const create = async (req, res, next) => {
   }
 };
 
-// const create = async (req, res, next) => {
-//   try {
-//     await MobileDev.syncIndexes();
-//     const filterBody = {
-//       brand: req.body.brand,
-//       OS: req.body.OS,
-//       versionOS: req.body.versionOS,
-//       language: req.body.language,
-//     };
-
-//     const newMobileDev = new MobileDev(filterBody);
-
-//     const { apps } = req.body;
-
-//     const arrayAppsIds = apps.split(',');
-//     arrayAppsIds.forEach((item) => {
-//       newMobileDev.apps.push(item);
-//     });
-
-//     const saveApps = await newMobileDev.save();
-
-//     if (saveApps) {
-//       const arrayTest = [];
-
-//       arrayAppsIds.forEach(async (itemID) => {
-//         const appId = await App.findById(itemID);
-
-//         await appId.updateOne({
-//           $push: { apps: saveApps._id },
-//         });
-
-//         const testAppUpdate = await App.findById(itemID);
-
-//         arrayTest.push({
-//           idApp: itemID,
-//           idMobile: newMobileDev._id,
-//           testAppUpdate: testAppUpdate.mobileDevs.includes(saveApps._id)
-//             ? true
-//             : false,
-//         });
-//       });
-
-//       return res.status(200).json({
-//         newMobileDevs: saveApps,
-//         testAppsUpdate: arrayTest,
-//       });
-//     } else {
-//       return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV);
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
 //! ---------------------------------------------------------------------
 //? ------------------------------GETALL --------------------------------
 //! ---------------------------------------------------------------------
-// const getAll = async (req, res, next) => {
-//   try {
-//     const allMovies = await Movie.find().populate("characters");
-//     console.log("getAll movies: ", allMovies)
-//     if (allMovies) {
-//       return res.status(200).json(allMovies);
-//     } else {
-//       return res.status(404).json(MovieErrors.FAIL_SEARCHING_MOVIES);
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
 const getAll = async (req, res, next) => {
   try {
     const allMobileDevs = await MobileDev.find()
@@ -252,11 +190,11 @@ const addFavorite = async (req, res, next) => {
     if (!mobileFav.users.includes(user._id)) {
       await mobileFav.updateOne({ $push: { users: user._id } });
       await user.updateOne({ $push: { mobileDevs: mobileFav._id } });
-      res.status(200).json('The activity has been added');
+      res.status(200).json('Added to favorites');
     } else {
       await mobileFav.updateOne({ $pull: { users: user._id } });
       await user.updateOne({ $pull: { mobileDevs: mobileFav._id } });
-      res.status(200).json('The activity has not been added');
+      res.status(200).json('Remove from favoritesñ');
     }
   } catch (error) {
     return next('error handle add event', error);

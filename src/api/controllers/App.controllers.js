@@ -12,7 +12,14 @@ const {
 //! ---------------------------------------------------------------------
 const create = async (req, res, next) => {
   try {
-    const newApp = new App(req.body);
+    const filterBody = {
+      appName: req.body.appName,
+      category: req.body.category,
+      codeLanguages: req.body.codeLanguages,
+      appSize: req.body.appSize,
+    };
+
+    const newApp = new App(filterBody);
     const saveApp = await newApp.save();
     if (saveApp) {
       return res.status(200).json(saveApp);
@@ -23,74 +30,6 @@ const create = async (req, res, next) => {
     return next(error);
   }
 };
-
-// const create = async (req, res, next) => {
-//   //! capturo la url para si luego la tengo que borrar y le pongo el optional chaining (?) para que no me rompa en caso que no tenga la clave path
-//   //let catchImg = req.file?.path;
-
-//   try {
-//     await App.syncIndexes();
-//     const filterBody = {
-//       appName: req.body.appName,
-//       category: req.body.category,
-//       codeLanguages: req.body.codeLanguages,
-//       appSize: req.body.appSize,
-//     };
-
-//     // cremos un nuevo modelo con los datos que nos trae la request body
-//     const newApp = new App(filterBody);
-
-//     //console.log("body: ", req.body)
-
-//     // cogemos las movies del req.body y las recorremos
-//     const { mobileDevs } = req.body;
-
-//     //console.log("mobileDevs: ", mobileDevs)
-
-//     const arrayMobileDevsIds = mobileDevs.split(',');
-//     arrayMobileDevsIds.forEach((item) => {
-//       newApp.mobileDevs.push(item);
-//     });
-//     console.log('newApp: ', newApp);
-//     // lo guardamos en la db
-//     const saveMobileDevs = await newApp.save();
-//     // evaluamos que se haya efectuado correctamente
-//     if (saveMobileDevs) {
-//       // si es un si: envio un 200 y un json con el objeto postedo
-//       const arrayTest = [];
-//       arrayMobileDevsIds.forEach(async (itemID) => {
-//         const mobileById = await MobileDev.findById(itemID);
-//         await mobileById.updateOne({
-//           $push: { apps: saveMobileDevs._id },
-//         });
-//         const testUpdateMobileDev = await MobileDev.findById(itemID);
-//         arrayTest.push({
-//           idMobile: itemID,
-//           idApp: newApp._id,
-//           testMobileDesUpdate: testUpdateMobileDev.apps.includes(
-//             saveMobileDevs._id
-//           )
-//             ? true
-//             : false,
-//         });
-//       });
-
-//       return res.status(200).json({
-//         newApp: saveMobileDevs,
-//         testMobileDevUpdate: arrayTest,
-//       });
-//     } else {
-//       // si es un no: envio un 404 not found, de que no se ha enviado en elemento a la base de datos
-//       return res.status(404).json(MobileDevErrors.FAIL_CREATING_MOBILEDEV); // TODO: Actualizar a error de APP
-//     }
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
-
-//! ---------------------------------------------------------------------
-//? ------------------------------GET ALL -------------------------------
-//! ---------------------------------------------------------------------
 
 const getAll = async (req, res, next) => {
   try {
@@ -156,6 +95,7 @@ const getByAppName = async (req, res, next) => {
 // });
 // return newApp;
 // };
+
 const updateApp = async (req, res, next) => {
   try {
     const filterBody = {
